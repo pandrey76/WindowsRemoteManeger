@@ -20,6 +20,7 @@ def read_gmail():
     assert status == 'OK'
 
     typ, data = connection.search(None, '(UNSEEN)', 'FROM', '"%s"' % sender)
+    body = ''
     try:
         print(data)
         for num in data[0].split():
@@ -51,10 +52,11 @@ def read_gmail():
                     print("Variant 1:   ", base64.b64decode(play_load).decode("UTF-8"))
 
                 # Второй способ декодирования ела сообщения (Более правильный)
+                body = part.get_payload(decode=True)
                 print("Variant 2:   ", part.get_payload(decode=True))
 
-                with open(str(num), 'wb') as new_file:
-                    new_file.write(part.get_payload(decode=True))
+                # with open(str(num), 'wb') as new_file:
+                #    new_file.write(part.get_payload(decode=True))
 
     finally:
         try:
@@ -62,6 +64,7 @@ def read_gmail():
         except:
             pass
         connection.logout()
+        return body
 
 
 if __name__ == '__main__':
