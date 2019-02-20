@@ -30,3 +30,8 @@
 
 7. $Env:USERPROFILE
 Выведет параметр директории профиля пользователя (C:\Users\admin1)
+
+8. Set-Content перезаписывает целевой файл, а Add-Content - в файл.
+
+Set-Content -Value "Test1" -Path C:\Scripts\Scratch\test.txt
+Add-Content -Value "Test" -Path C:\Scripts\Scratch\test.txt
