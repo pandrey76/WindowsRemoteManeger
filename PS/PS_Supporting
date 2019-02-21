@@ -3,23 +3,26 @@
 
     Set-ExecutionPolicy Unrestricted
 
+
 2. Скрипты, подготовленные на локальном компьютере, можно запускать без ограничений,
 скрипты, загруженные из Интернета - только при наличии цифровой подписи.
 
     Set-ExecutionPolicy AllSigned
+
 
 3. Разрешено выполнение любых скриптов. При запуске не подписанного скрипта,
 который был загружен из Интернета, программа может потребовать подтверждение.
 
     Set-ExecutionPolicy RemoteSigned
 
+
 4. Блокируется выполнение любых скриптов. Значение по умолчанию.
 
     Set-ExecutionPolicy Restricted
 
+
 5. Для выполнения выше представленных команд без подтверждения изменения, воспользуйтесь параметром
  -Force, например выполните команду:
-
     Теперь при выполнении команд не нужно подтверждать производимые изменения.
 
     Set-ExecutionPolicy Bypass -Force
@@ -28,10 +31,49 @@
 6.  Get-ChildItem Env:
 Выведет все переменные EnvVarible.
 
+
 7. $Env:USERPROFILE
 Выведет параметр директории профиля пользователя (C:\Users\admin1)
 
+
 8. Set-Content перезаписывает целевой файл, а Add-Content - в файл.
 
-Set-Content -Value "Test1" -Path C:\Scripts\Scratch\test.txt
-Add-Content -Value "Test" -Path C:\Scripts\Scratch\test.txt
+    Set-Content -Value "Test1" -Path C:\Scripts\Scratch\test.txt
+    Add-Content -Value "Test" -Path C:\Scripts\Scratch\test.txt
+
+
+9. Назначение пользователю прав на запуск только программы "Калькулятор"
+
+    Set-AssignedAccess -AppUserModelId $calculater_id!app -UserName $user
+
+
+10. Очищаем все огранияения, что ранее назначили
+
+       Clear-AssignedAccess
+
+11. Выход из системы активного пользователя
+
+    logoff
+
+12. Выход из системы залогиненного пользователя
+
+    logoff i
+
+    i - идентификатор сесии пользователя
+
+13. Список залогиненных пользователей в виде масива строк представленных в виде таблицы
+
+ ЏЋ‹њ‡Ћ‚Ђ’…‹њ          ‘…ЂЌ‘              ID  ‘’Ђ’“‘  Ѓ…‡„…‰‘’‚. ‚ђ…Њџ ‚•Ћ„Ђ
+ >admin1                console           7  ЂЄвЁў­®          1  21.02.2019 9:59
+ ogurchuk                                 8  „ЁбЄ            1  21.02.2019 13:14
+
+    $users = query user
+
+    $users[0] - строка содержащая столбцы таблицы
+
+    $users[1] - строка содержащая admin1 (admin1         console       7   ЂЄвЁў­®      1  21.02.2019 9:59)
+    $users[1] - строка содержащая ogurchuk
+
+14. Выводит кучу всего по зарегистрированным пользователям, надо разбтрать.
+
+    Get-WmiObject Win32_LoggedOnUser -ComputerName $env:COMPUTERNAME
