@@ -1,4 +1,6 @@
 import os.path
+import importlib.util
+
 path_to_run_ps_script = '..'
 path_to_run_ps_script += os.path.sep
 path_to_run_ps_script = os.path.join(path_to_run_ps_script, 'PS')
@@ -7,7 +9,6 @@ ps_dir = path_to_run_ps_script
 
 path_to_run_ps_script = os.path.join(path_to_run_ps_script, 'Windows_PS_User_Operation.py')
 
-import importlib.util
 spec = importlib.util.spec_from_file_location("Windows_PS_User_Operation.RunPowerShellScript", path_to_run_ps_script)
 windows_ps_user_operation = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(windows_ps_user_operation)

@@ -1,4 +1,10 @@
-from GMAIL_PWD import GMAIL_PWD, MAIN_EMAIL, FROM_WHO
+import importlib.util
+
+spec = importlib.util.spec_from_file_location("GMAIL_PWD", "GMAIL_PWD.py")
+qmail_pwd = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(qmail_pwd)
+
+#from GMAIL_PWD import GMAIL_PWD, MAIN_EMAIL, FROM_WHO
 
 import imaplib
 import email
@@ -24,9 +30,9 @@ class Mailing:
         """
         host = "imap.gmail.com"
         port = 993
-        user = MAIN_EMAIL
-        password = GMAIL_PWD
-        sender = MAIN_EMAIL
+        user = qmail_pwd.MAIN_EMAIL
+        password = qmail_pwd.GMAIL_PWD
+        sender = qmail_pwd.MAIN_EMAIL
 
         connection = imaplib.IMAP4_SSL(host=host, port=port)
         connection.login(user=user, password=password)
@@ -111,4 +117,7 @@ def read_gmail():
 
 
 if __name__ == '__main__':
-    read_gmail()
+    mail = Mailing()
+    mail.read_unseen_mail()
+    body = mail.mail_body
+    print(body)

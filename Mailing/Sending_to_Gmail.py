@@ -28,4 +28,4 @@ def send_gmail(msg_str):
 # def take_email()
 # ===========================================
 if __name__ == '__main__':
-    send_gmail("01 minutes")
+    send_gmail("BAN")
