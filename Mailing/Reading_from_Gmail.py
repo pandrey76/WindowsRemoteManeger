@@ -6,6 +6,49 @@ import email
 import base64
 
 
+class Mailing:
+    def __init__(self):
+        """
+
+        """
+        self.__Body = None
+
+    mail_body = property(lambda self: self.__Body)
+    """
+    """
+
+    def read_unseen_mail(self):
+        """
+
+        :return:
+        """
+        host = "imap.gmail.com"
+        port = 993
+        user = MAIN_EMAIL
+        password = GMAIL_PWD
+        sender = MAIN_EMAIL
+
+        connection = imaplib.IMAP4_SSL(host=host, port=port)
+        connection.login(user=user, password=password)
+
+        status, msgs = connection.select('INBOX')
+        assert status == 'OK'
+
+        typ, data = connection.search(None, '(UNSEEN)', 'FROM', '"%s"' % sender)
+        try:
+            for num in data[0].split():
+                typ, message_data = connection.fetch(num, '(RFC822)')
+                mail = email.message_from_bytes(message_data[0][1])
+                for part in mail.walk():
+                    self.__Body = part.get_payload(decode=True)
+        finally:
+            try:
+                connection.close()
+            except:
+                pass
+            connection.logout()
+
+
 def read_gmail():
     host = "imap.gmail.com"
     port = 993

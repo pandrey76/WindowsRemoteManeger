@@ -95,22 +95,36 @@ process {
 
 function Get-Quser-v2([String]$user)
 {
-    		    $query_user = quser | Select-Object -Skip 1
-                
-                foreach ($Computer in $query_user)   
-                {
-				    $CurrentLine = $Computer.Trim() -Replace '\s+', ' ' -Split '\s'
-                    $CurrentLine = $CurrentLine -Replace '>'
-				    $UserName = $CurrentLine[0]
-				    $UserID = $CurrentLine[1]
-				    $UserActivity = $CurrentLine[2]
+  
+        $tmplt = @{
+            ComputerName  = $null
+            UserName      = $null
+            SessionName   = $null
+            SessionId     = $null
+            State         = $null
+            IdleTime      = $null
+            LogonTime     = $null
+            Error         = $null
+        }
 
-				    # If session is disconnected, all processes will be closed and the user logged out
-				    if ($UserActivity -match 'Disc') 
+        $hash = $tmplt.Clone()
+    		    
+                $query_user = quser | Select-Object -Skip 1
+                
+                
+                foreach ($CurrentLine in $query_user)   
+                {
+                    $hash.ComputerName = $env:COMPUTERNAME
+                    $hash.UserName = (-join $CurrentLine[1 .. 20]).Trim() -Replace '>'
+                    $hash.SessionName = (-join $CurrentLine[23 .. 37]).Trim()
+                    $hash.SessionId = [int](-join $CurrentLine[38 .. 44])
+                    $hash.State = (-join $CurrentLine[46 .. 53]).Trim()
+                    $hash.IdleTime = (-join $CurrentLine[54 .. 63]).Trim()
+                    $hash.LogonTime = (-join $CurrentLine[65 .. ($CurrentLine.Length - 1)])
+
+				    if ($hash.UserName -match $user.ToLower()) 
                     {
-					    Get-Process | Select -Property ID, SessionID | Where-Object { $_.SessionID -eq $UserID } | ForEach-Object { Stop-Process -ID $_.ID -Force -ErrorAction SilentlyContinue }
-					    Write-Warning "Logging off user $UserName"
-					    Logoff $UserID
+        			    Logoff $hash.SessionId
 				    }
     }
 }
@@ -121,6 +135,6 @@ function LogoffCurrentUser()
 }
 
 #Get-Quser -Username Ogurchuk -Logoff
-Get-Quser-v2 #
+Get-Quser-v2 -user "Ogurchuk"
 #Get-ULogged -ComputerName $env:COMPUTERNAME
 #LogoffCurrentUser
