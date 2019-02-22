@@ -1,8 +1,7 @@
 import os.path
 import importlib.util
 
-path_to_run_ps_script = '..'
-path_to_run_ps_script += os.path.sep
+path_to_run_ps_script = os.getcwd()
 path_to_run_ps_script = os.path.join(path_to_run_ps_script, 'PS')
 
 ps_dir = path_to_run_ps_script

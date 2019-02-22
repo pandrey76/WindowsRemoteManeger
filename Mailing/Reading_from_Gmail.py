@@ -1,15 +1,11 @@
-import importlib.util
-
-spec = importlib.util.spec_from_file_location("GMAIL_PWD", "GMAIL_PWD.py")
-qmail_pwd = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(qmail_pwd)
-
-#from GMAIL_PWD import GMAIL_PWD, MAIN_EMAIL, FROM_WHO
-
 import imaplib
 import email
 
 import base64
+
+MAIN_EMAIL = "pinchukandreyurevich76@gmail.com"
+GMAIL_PWD = ""
+FROM_WHO = "Prapor"
 
 
 class Mailing:
@@ -30,9 +26,9 @@ class Mailing:
         """
         host = "imap.gmail.com"
         port = 993
-        user = qmail_pwd.MAIN_EMAIL
-        password = qmail_pwd.GMAIL_PWD
-        sender = qmail_pwd.MAIN_EMAIL
+        user = MAIN_EMAIL
+        password = GMAIL_PWD
+        sender = MAIN_EMAIL
 
         connection = imaplib.IMAP4_SSL(host=host, port=port)
         connection.login(user=user, password=password)

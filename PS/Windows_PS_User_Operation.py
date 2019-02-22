@@ -83,8 +83,8 @@ def block_user(user):
 
 if __name__ == "__main__":
     run_script = RunPowerShellScript()
-    run_script.run_script("..//PS//RecoverUserFromBan.ps1")
-    # run_script.run("..//PS//BanUser.ps1")
+    # run_script.run_script("..//PS//RecoverUserFromBan.ps1")
+    run_script.run_script("..//PS//BanUser.ps1")
     run_script.run_script("..//PS//LogoffUser.ps1")
 
     #print(os.path.expanduser(os.getenv('USERPROFILE')))
