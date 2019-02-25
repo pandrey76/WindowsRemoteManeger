@@ -19,11 +19,11 @@ path_to_run_script = os.path.join(path_to_run_script, 'LimitingUser.py')
 
 
 spec = importlib.util.spec_from_file_location("LimitingUser.LimitingUser", path_to_run_script)
-limiting_user= importlib.util.module_from_spec(spec)
+limiting_user = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(limiting_user)
 
 
-class ActivateEngine:
+class Engine:
     """
 
     """
@@ -42,12 +42,12 @@ class ActivateEngine:
             lim_user = limiting_user.LimitingUser()
             if str(body).find("BAN") != -1:
                 lim_user.baning_user("Ogurchuk")
-            elif str(body).find("RECOVERY") != -1:
+            elif str(body).find("RECOVER") != -1:
                 lim_user.recover_user("Ogurchuk")
             else:
                 return
 
 
 if __name__ == "__main__":
-    limit_user = ActivateEngine()
+    limit_user = Engine()
     limit_user.run()

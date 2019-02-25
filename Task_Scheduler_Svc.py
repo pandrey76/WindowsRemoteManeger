@@ -2,16 +2,25 @@
 Created on Aug 27, 2016
 @author: Burkhard
 '''
-
-
 # Scheduling imports
 import schedule
-from Email_via_Gmail import send_gmail
 
 # Windows Service imports
 import win32service
 import win32serviceutil  
 import win32event                              
+
+import os
+import os.path
+import importlib.util
+
+path_to_run_script = os.getcwd()
+path_to_run_script = os.path.join(path_to_run_script, 'ActivateEngine.py')
+
+#spec = importlib.util.spec_from_file_location("ActivateEngine.Engine", path_to_run_script)
+#activate_engine = importlib.util.module_from_spec(spec)
+#spec.loader.exec_module(activate_engine)
+#from ActivateEngine import Engine
 
 
 class PythonTaskSvc(win32serviceutil.ServiceFramework):  
@@ -25,8 +34,20 @@ class PythonTaskSvc(win32serviceutil.ServiceFramework):
         
     def SvcDoRun(self):  
         def job():
-            send_gmail(email_file)
-        
+            with open("c:\\13.txt", 'a') as g:
+                g.write("Job_")
+                g.write("hello")
+                g.write(os.linesep)
+                #g.write(str(activate_engine))
+                try:
+                    print("Hello")
+                    #g.write(str(activate_engine))
+                    #eng = activate_engine.Engine()
+                    #g.write(str(eng))
+                    #eng.run()
+                except Exception as er:
+                   g.write(str(er))
+
         schedule.every(1).minutes.do(job)
         
         rc = None
@@ -37,8 +58,9 @@ class PythonTaskSvc(win32serviceutil.ServiceFramework):
     def SvcStop(self):  
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)  
         win32event.SetEvent(self.hWaitStop)  
-          
-if __name__ == '__main__':  
+
+
+if __name__ == '__main__':
     win32serviceutil.HandleCommandLine(PythonTaskSvc)  
     
 

@@ -54,6 +54,6 @@ class LimitingUser:
 
 if __name__ == "__main__":
     limit_user = LimitingUser()
-    limit_user.recover_user("Ogurchuk")
-    # limit_user.baning_user("Ogurchuk")
+    # limit_user.recover_user("Ogurchuk")
+    limit_user.baning_user("Ogurchuk")
 
