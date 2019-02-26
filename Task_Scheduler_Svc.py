@@ -14,39 +14,35 @@ import os
 import os.path
 import importlib.util
 
-path_to_run_script = os.getcwd()
-path_to_run_script = os.path.join(path_to_run_script, 'ActivateEngine.py')
 
-#spec = importlib.util.spec_from_file_location("ActivateEngine.Engine", path_to_run_script)
-#activate_engine = importlib.util.module_from_spec(spec)
-#spec.loader.exec_module(activate_engine)
-#from ActivateEngine import Engine
-
-
-class PythonTaskSvc(win32serviceutil.ServiceFramework):  
+class PythonTaskSvc(win32serviceutil.ServiceFramework):
     _svc_name_ = "PythonTaskSvc"    
     _svc_display_name_ = "Python Task Scheduling Service"   
     _svc_description_ = "This Python service schedules tasks"  
       
-    def __init__(self, args):  
-        win32serviceutil.ServiceFramework.__init__(self,args)  
+    def __init__(self, args):
+        """
+
+        :param args:
+        """
+        path_to_run_script = os.path.dirname(os.path.realpath(__file__))
+        path_to_run_script = os.path.join(path_to_run_script, 'ActivateEngine.py')
+        spec = importlib.util.spec_from_file_location("ActivateEngine.Engine", path_to_run_script)
+        self.__activate_engine = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.__activate_engine)
+
+        win32serviceutil.ServiceFramework.__init__(self, args)
         self.hWaitStop = win32event.CreateEvent(None, 0, 0, None)  
         
     def SvcDoRun(self):  
         def job():
-            with open("c:\\13.txt", 'a') as g:
-                g.write("Job_")
-                g.write("hello")
-                g.write(os.linesep)
-                #g.write(str(activate_engine))
-                try:
-                    print("Hello")
-                    #g.write(str(activate_engine))
-                    #eng = activate_engine.Engine()
-                    #g.write(str(eng))
-                    #eng.run()
-                except Exception as er:
-                   g.write(str(er))
+            try:
+                engine = self.__activate_engine.Engine()
+                engine.run()
+            except Exception as er:
+                with open("c:\\13.txt", 'a') as g:
+                    g.write(str(er))
+                    g.write(os.linesep)
 
         schedule.every(1).minutes.do(job)
         

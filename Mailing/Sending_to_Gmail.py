@@ -28,5 +28,5 @@ def send_gmail(msg_str):
 # def take_email()
 # ===========================================
 if __name__ == '__main__':
-    send_gmail("BAN")
-    # send_gmail("RECOVER")
+    #send_gmail("BAN")
+    send_gmail("RECOVER")

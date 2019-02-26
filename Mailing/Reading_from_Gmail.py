@@ -2,10 +2,12 @@ import imaplib
 import email
 
 import base64
+import os
+import importlib.util
 
-MAIN_EMAIL = "pinchukandreyurevich76@gmail.com"
-GMAIL_PWD = ""
-FROM_WHO = "Prapor"
+#MAIN_EMAIL = "pinchukandreyurevich76@gmail.com"
+#GMAIL_PWD = ""
+#FROM_WHO = "Prapor"
 
 
 class Mailing:
@@ -13,7 +15,18 @@ class Mailing:
         """
 
         """
+        path_to_run_ps_script = os.path.dirname(os.path.realpath(__file__))
+
+        path_to_run_ps_script = os.path.join(path_to_run_ps_script, 'GMAIL_PWD.py')
+
+        spec = importlib.util.spec_from_file_location("GMAIL_PWD",
+                                                      path_to_run_ps_script)
+        self.__gmail_pwd = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.__gmail_pwd)
+
         self.__Body = None
+
+
 
     mail_body = property(lambda self: self.__Body)
     """
@@ -26,9 +39,9 @@ class Mailing:
         """
         host = "imap.gmail.com"
         port = 993
-        user = MAIN_EMAIL
-        password = GMAIL_PWD
-        sender = MAIN_EMAIL
+        user = self.__gmail_pwd.MAIN_EMAIL
+        password = self.__gmail_pwd .GMAIL_PWD
+        sender = self.__gmail_pwd .MAIN_EMAIL
 
         connection = imaplib.IMAP4_SSL(host=host, port=port)
         connection.login(user=user, password=password)
