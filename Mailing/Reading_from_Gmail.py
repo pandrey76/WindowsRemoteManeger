@@ -5,6 +5,8 @@ import base64
 import os
 import importlib.util
 
+import socket
+
 #MAIN_EMAIL = "pinchukandreyurevich76@gmail.com"
 #GMAIL_PWD = ""
 #FROM_WHO = "Prapor"
@@ -31,6 +33,20 @@ class Mailing:
     mail_body = property(lambda self: self.__Body)
     """
     """
+
+    def is_online(self):
+        """
+
+        :return:
+        """
+        try:
+            # connect to the host -- tells us if the host is actually
+            # reachable
+            socket.create_connection(("www.google.ru", 80), timeout=20)
+            return True
+        except OSError:
+            pass
+        return False
 
     def read_unseen_mail(self):
         """
@@ -126,7 +142,10 @@ def read_gmail():
 
 
 if __name__ == '__main__':
+
     mail = Mailing()
-    mail.read_unseen_mail()
-    body = mail.mail_body
-    print(body)
+    flag = mail.is_online()
+    print(flag)
+    #mail.read_unseen_mail()
+    #body = mail.mail_body
+    #print(body)
