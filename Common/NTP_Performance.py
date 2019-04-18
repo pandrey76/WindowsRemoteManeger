@@ -1,5 +1,5 @@
 import ntplib
-
+import time
 
 class NTPPerformance:
     """
@@ -37,3 +37,4 @@ class NTPPerformance:
 if __name__ == '__main__':
     ntp = NTPPerformance()
     print(ntp.get_utc())
+    print(time.time())

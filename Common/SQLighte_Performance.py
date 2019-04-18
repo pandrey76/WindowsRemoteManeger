@@ -18,7 +18,7 @@ class DBPerformance:
     def crete_tables(self):
         try:
             self.__Cursor.execute("""CREATE TABLE blocked (id INTEGER PRIMARY KEY, isBlocked INTEGER)""")
-            self.__Cursor.execute("""INSERT INTO blocked VALUES(?, ?)""", (1, 1))
+            self.__Cursor.execute("""INSERT INTO blocked VALUES(?, ?)""", (1, 0))
             self.__Connection.commit()
         except sqlite3.Error as ex:
             pass  # print(ex)

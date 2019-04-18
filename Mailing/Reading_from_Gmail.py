@@ -65,7 +65,7 @@ class Mailing:
         status, msgs = connection.select('INBOX')
         assert status == 'OK'
 
-        typ, data = connection.search(None, '(UNSEEN)', 'FROM', '"%s"' % sender)
+        typ, data = connection.search(None, '(UNSEEN)') # , 'FROM', '"%s"' % sender)
         try:
             for num in data[0].split():
                 typ, message_data = connection.fetch(num, '(RFC822)')

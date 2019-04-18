@@ -1,6 +1,6 @@
 import os.path
 import importlib.util
-
+import time
 
 class Engine:
     """
@@ -32,6 +32,21 @@ class Engine:
 
         self.__ban_timeout = 10
 
+        path_to_common_scripts = os.path.dirname(os.path.realpath(__file__))
+        path_to_common_scripts = os.path.join(path_to_common_scripts, 'Common')
+        path_to_common_scripts = os.path.join(path_to_common_scripts, 'SQLighte_Performance.py')
+        spec = importlib.util.spec_from_file_location("SQLighte_Performance.DBPerformance", path_to_common_scripts)
+        self.__db_performance = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.__db_performance)
+
+        path_to_common_scripts = os.path.dirname(os.path.realpath(__file__))
+        path_to_common_scripts = os.path.join(path_to_common_scripts, 'Common')
+        path_to_common_scripts = os.path.join(path_to_common_scripts, 'NTP_Performance.py')
+        spec = importlib.util.spec_from_file_location("NTP_Performance.NTPPerformance", path_to_common_scripts)
+        self.__ntp_performance = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.__ntp_performance)
+
+
     def remove_ban_file(self):
         """
 
@@ -44,21 +59,57 @@ class Engine:
 
         :return:
         """
+        user = "Ogurchuk"
+        lim_user = self.__limiting_user.LimitingUser()
         mail = self.__reeading_from_gmail.Mailing()
-        if mail.is_online() is False:
-            self.do_ban()
-            return
+        ntp = self.__ntp_performance.NTPPerformance()
+
+        db = self.__db_performance.DBPerformance(lim_user.db_path())
+        db.crete_tables()
+        if db.get_blocked() is 0:
+            if mail.is_online() is False:
+                db.close()
+                self.do_ban()
+                return
+            # Check time limits
+            seconds_delay = 100
+            new_ct_time = ntp.get_utc()
+            st_time, cr_time = db.get_all_times()
+
+            if st_time is None or cr_time is None or int(st_time) is 0:
+                if new_ct_time is None:
+                    new_ct_time = time.time()
+                db.start_time(new_ct_time)
+                db.cur_time(new_ct_time)
+                db.close()
+                return
+            if new_ct_time is None:
+                cr_time += 70
+                db.cur_time(cr_time)
+                if cr_time > st_time + seconds_delay:
+                    db.close()
+                    lim_user.baning_user(user)
+                    return
+            else:
+                if new_ct_time > st_time + seconds_delay:
+                    db.close()
+                    lim_user.baning_user(user)
+                    return
         mail.read_unseen_mail()
         body = mail.mail_body
         if body is None:
+            db.close()
             return
         else:
-            lim_user = self.__limiting_user.LimitingUser()
             if str(body).find("BAN") != -1:
-                lim_user.baning_user("Ogurchuk")
+                lim_user.baning_user(user)
             elif str(body).find("RECOVER") != -1:
-                lim_user.recover_user("Ogurchuk")
+                new_st_time = ntp.get_utc()
+                if new_st_time is None:
+                    new_st_time = time.time()
+                lim_user.recover_user(user, new_st_time)
             else:
+                db.close()
                 return
 
     def do_ban(self):
