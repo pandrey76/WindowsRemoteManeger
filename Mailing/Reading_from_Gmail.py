@@ -28,8 +28,6 @@ class Mailing:
 
         self.__Body = None
 
-
-
     mail_body = property(lambda self: self.__Body)
     """
     """

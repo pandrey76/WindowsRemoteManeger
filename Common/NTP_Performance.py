@@ -1,6 +1,7 @@
 import ntplib
 import time
 
+
 class NTPPerformance:
     """
 

@@ -2,6 +2,7 @@ import os.path
 import importlib.util
 import time
 
+
 class Engine:
     """
 
@@ -41,11 +42,17 @@ class Engine:
 
         path_to_common_scripts = os.path.dirname(os.path.realpath(__file__))
         path_to_common_scripts = os.path.join(path_to_common_scripts, 'Common')
-        path_to_common_scripts = os.path.join(path_to_common_scripts, 'NTP_Performance.py')
-        spec = importlib.util.spec_from_file_location("NTP_Performance.NTPPerformance", path_to_common_scripts)
-        self.__ntp_performance = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(self.__ntp_performance)
+        path_to_common_scripts = os.path.join(path_to_common_scripts, 'TimePerformance.py')
+        spec = importlib.util.spec_from_file_location("TimePerformance.TimePerformance", path_to_common_scripts)
+        self.__time_performance = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.__time_performance)
 
+        path_to_common_scripts = os.path.dirname(os.path.realpath(__file__))
+        path_to_common_scripts = os.path.join(path_to_common_scripts, 'Actions')
+        path_to_common_scripts = os.path.join(path_to_common_scripts, 'MainBanInspector.py')
+        spec = importlib.util.spec_from_file_location("MainBanInspector.MainBanInspector", path_to_common_scripts)
+        self.__main_ban_inspector = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.__main_ban_inspector)
 
     def remove_ban_file(self):
         """
@@ -62,7 +69,7 @@ class Engine:
         user = "Ogurchuk"
         lim_user = self.__limiting_user.LimitingUser()
         mail = self.__reeading_from_gmail.Mailing()
-        ntp = self.__ntp_performance.NTPPerformance()
+        # ntp = self.__time_performance.NTPPerformance()
 
         db = self.__db_performance.DBPerformance(lim_user.db_path())
         db.crete_tables()
@@ -71,30 +78,35 @@ class Engine:
                 db.close()
                 self.do_ban()
                 return
-            # Check time limits
-            seconds_delay = 100
-            new_ct_time = ntp.get_utc()
-            st_time, cr_time = db.get_all_times()
 
-            if st_time is None or cr_time is None or int(st_time) is 0:
-                if new_ct_time is None:
-                    new_ct_time = time.time()
-                db.start_time(new_ct_time)
-                db.cur_time(new_ct_time)
-                db.close()
-                return
-            if new_ct_time is None:
-                cr_time += 70
-                db.cur_time(cr_time)
-                if cr_time > st_time + seconds_delay:
-                    db.close()
-                    lim_user.baning_user(user)
-                    return
-            else:
-                if new_ct_time > st_time + seconds_delay:
-                    db.close()
-                    lim_user.baning_user(user)
-                    return
+            main_ban_inspec = self.__main_ban_inspector.MainBanInspector(db)
+            if main_ban_inspec.is_worked():
+                lim_user.baning_user(user)
+
+            # Check time limits
+            # seconds_delay = 100
+            # new_ct_time = ntp.get_utc()
+            # st_time, cr_time = db.get_all_times()
+            #
+            # if st_time is None or cr_time is None or int(st_time) is 0:
+            #     if new_ct_time is None:
+            #         new_ct_time = time.time()
+            #     db.start_time(new_ct_time)
+            #     db.cur_time(new_ct_time)
+            #     db.close()
+            #     return
+            # if new_ct_time is None:
+            #     cr_time += 70
+            #     db.cur_time(cr_time)
+            #     if cr_time > st_time + seconds_delay:
+            #         db.close()
+            #         lim_user.baning_user(user)
+            #         return
+            # else:
+            #     if new_ct_time > st_time + seconds_delay:
+            #         db.close()
+            #         lim_user.baning_user(user)
+            #         return
         mail.read_unseen_mail()
         body = mail.mail_body
         if body is None:
