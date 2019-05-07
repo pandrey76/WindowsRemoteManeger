@@ -13,7 +13,7 @@ class BanAction:
     data_base_handle = property(lambda self: self.__DB)
     """
     """
-    def is_worked(self):
+    def is_triggered(self):
         """
         """
         raise Exception("No implement")

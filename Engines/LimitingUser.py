@@ -7,7 +7,7 @@ class LimitingUser:
 
     """
 
-    def __init__(self):
+    def __init__(self, db):
         """
 
         """
@@ -25,19 +25,7 @@ class LimitingUser:
         self.__windows_ps_user_operation = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(self.__windows_ps_user_operation)
 
-        path_to_common_scripts = os.path.dirname(os.path.realpath(__file__))
-        path_to_common_scripts = path_to_common_scripts + os.sep + ".." + os.sep
-        path_to_common_scripts = os.path.join(path_to_common_scripts, 'Common')
-        path_to_common_scripts = os.path.join(path_to_common_scripts, 'SQLighte_Performance.py')
-        spec = importlib.util.spec_from_file_location("SQLighte_Performance.DBPerformance", path_to_common_scripts)
-        self.__db_performance = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(self.__db_performance)
-
-        self.__db_path = os.path.join(os.path.expanduser(os.getenv('USERPROFILE')), "my_sqlite_3.db")
-        # self.__db_path = "my_sqlite.db"
-
-    def db_path(self):
-        return self.__db_path
+        self.__DB = db
 
     def baning_user(self, user):
         """
@@ -55,15 +43,13 @@ class LimitingUser:
         run_ps_scripts = self.__windows_ps_user_operation.RunPowerShellScript()
         run_ps_scripts.run_script(ps_logoff_user_path)
 
-        db = self.__db_performance.DBPerformance(self.__db_path)
-        db.crete_tables()
-        db.blocked(True)
-        db.close()
+        self.__DB.blocked(True)
 
     def recover_user(self, user, st_time):
         """
 
         :param user:
+        :param st_time:
         :return:
         """
         ps_ban_user_path = self.__ps_dir
@@ -76,12 +62,10 @@ class LimitingUser:
         run_ps_scripts = self.__windows_ps_user_operation.RunPowerShellScript()
         run_ps_scripts.run_script(ps_logoff_user_path)
 
-        db = self.__db_performance.DBPerformance(self.__db_path)
-        db.crete_tables()
-        db.blocked(False)
-        db.start_time(st_time)
-        db.cur_time(st_time)
-        db.close()
+        self.__DB.blocked(False)
+        self.__DB.start_time(st_time)
+        self.__DB.cur_time(st_time)
+
 
 if __name__ == "__main__":
     limit_user = LimitingUser()

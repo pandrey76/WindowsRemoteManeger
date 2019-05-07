@@ -1,6 +1,5 @@
 import os.path
 import importlib.util
-import time
 
 
 class Engine:
@@ -54,6 +53,8 @@ class Engine:
         self.__main_ban_inspector = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(self.__main_ban_inspector)
 
+        self.__DB_Path = os.path.join(os.path.expanduser(os.getenv('USERPROFILE')), "my_sqlite_3.db")
+
     def remove_ban_file(self):
         """
 
@@ -69,9 +70,10 @@ class Engine:
         user = "Ogurchuk"
         lim_user = self.__limiting_user.LimitingUser()
         mail = self.__reeading_from_gmail.Mailing()
-        # ntp = self.__time_performance.NTPPerformance()
+        tp = self.__time_performance.TimePerformance()
+        newest_current_time = tp.get_utc()
 
-        db = self.__db_performance.DBPerformance(lim_user.db_path())
+        db = self.__db_performance.DBPerformance(self.__DB_Path)
         db.crete_tables()
         if db.get_blocked() is 0:
             if mail.is_online() is False:
@@ -79,8 +81,8 @@ class Engine:
                 self.do_ban()
                 return
 
-            main_ban_inspec = self.__main_ban_inspector.MainBanInspector(db)
-            if main_ban_inspec.is_worked():
+            main_ban_inspec = self.__main_ban_inspector.MainBanInspector(db, newest_current_time)
+            if main_ban_inspec.is_triggered():
                 lim_user.baning_user(user)
 
             # Check time limits
@@ -110,18 +112,14 @@ class Engine:
         mail.read_unseen_mail()
         body = mail.mail_body
         if body is None:
-            db.close()
             return
         else:
             if str(body).find("BAN") != -1:
                 lim_user.baning_user(user)
             elif str(body).find("RECOVER") != -1:
-                new_st_time = ntp.get_utc()
-                if new_st_time is None:
-                    new_st_time = time.time()
-                lim_user.recover_user(user, new_st_time)
+                lim_user.recover_user(user, newest_current_time)
             else:
-                db.close()
+                # db.close()
                 return
 
     def do_ban(self):
