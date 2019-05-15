@@ -7,7 +7,7 @@ class LimitingUser:
 
     """
 
-    def __init__(self, db):
+    def __init__(self ):
         """
 
         """
@@ -25,7 +25,8 @@ class LimitingUser:
         self.__windows_ps_user_operation = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(self.__windows_ps_user_operation)
 
-        self.__DB = db
+        # self.__User = user
+        # self.__DB = db
 
     def baning_user(self, user):
         """
@@ -43,9 +44,9 @@ class LimitingUser:
         run_ps_scripts = self.__windows_ps_user_operation.RunPowerShellScript()
         run_ps_scripts.run_script(ps_logoff_user_path)
 
-        self.__DB.blocked(True)
+        # self.__DB.blocked(True)
 
-    def recover_user(self, user, st_time):
+    def recover_user(self, user):
         """
 
         :param user:
@@ -62,9 +63,11 @@ class LimitingUser:
         run_ps_scripts = self.__windows_ps_user_operation.RunPowerShellScript()
         run_ps_scripts.run_script(ps_logoff_user_path)
 
-        self.__DB.blocked(False)
-        self.__DB.start_time(st_time)
-        self.__DB.cur_time(st_time)
+        # user.blocked_state = False
+        # self.__DB.blocked(False)
+        # user.start_session_time = st_time
+        # user.current_time = st_time
+
 
 
 if __name__ == "__main__":

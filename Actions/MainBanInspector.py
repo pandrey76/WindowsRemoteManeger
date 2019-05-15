@@ -10,11 +10,11 @@ spec1.loader.exec_module(ban_action)
 
 
 class MainBanInspector(ban_action.BanAction):
-    def __init__(self, db, current_time):
+    def __init__(self, user, current_time):
         """
 
         """
-        super().__init__(db)
+        super().__init__(user)
         self.__CurrentTime = current_time
         self.__MainArray = []
 

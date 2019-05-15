@@ -2,6 +2,7 @@
 Created on Aug 27, 2016
 @author: Burkhard
 '''
+
 # Scheduling imports
 import schedule
 
@@ -37,7 +38,7 @@ class PythonTaskSvc(win32serviceutil.ServiceFramework):
     def SvcDoRun(self):  
         def job():
             try:
-                engine = self.__activate_engine.Engine()
+                engine = self.__activate_engine.Engine(60)
                 engine.run()
             except Exception as er:
                 with open("c:\\13.txt", 'a') as g:

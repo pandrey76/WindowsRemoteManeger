@@ -3,14 +3,14 @@
 class BanAction:
     """
     """
-    def __init__(self, db):
+    def __init__(self, user):
         """
 
-        :param db:
+        :param user:
         """
-        self.__DB = db
+        self.__User = user
 
-    data_base_handle = property(lambda self: self.__DB)
+    user = property(lambda self: self.__User)
     """
     """
     def is_triggered(self):

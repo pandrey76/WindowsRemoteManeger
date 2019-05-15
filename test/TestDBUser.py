@@ -18,7 +18,7 @@ class TestDBUser(unittest.TestCase):
         spec1 = importlib.util.spec_from_file_location("User.User", path_to_scripts)
         self.__UserModule = importlib.util.module_from_spec(spec1)
         spec1.loader.exec_module(self.__UserModule)
-        self.__UserName = "Admin1"
+        self.__UserName = "Admin3"
 
         path_to_scripts = os.path.dirname(os.path.realpath(__file__))
         path_to_scripts = path_to_scripts + os.sep + ".." + os.sep
@@ -56,10 +56,10 @@ class TestDBUser(unittest.TestCase):
         """
         user_name = "Admin1"
         user = self.__UserModule.User.get_user(self.__DB, user_name)
-        self.assertTrue(user.name, user_name)
-        self.assertTrue(user.blocked_state, True)
-        self.assertTrue(user.online_permission, False)
-        self.assertTrue(user.work_seconds_delay, 7200)
+        self.assertEqual(user.name, user_name)
+        self.assertEqual(user.blocked_state, True)
+        self.assertEqual(user.online_permission, False)
+        self.assertEqual(user.work_seconds_delay, 7200)
         # self.assertTrue(user.name, user_name)
 
 

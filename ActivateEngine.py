@@ -6,10 +6,11 @@ class Engine:
     """
 
     """
-    def __init__(self):
+    def __init__(self, scheduler_seconds_delay):
         """
 
         """
+        self.__Scheduler_Delay = scheduler_seconds_delay
         path_to_run_script = os.path.dirname(os.path.realpath(__file__))
         path_to_run_script = os.path.join(path_to_run_script, 'Mailing')
 
@@ -25,8 +26,9 @@ class Engine:
         path_to_run_script = os.path.join(path_to_run_script, 'LimitingUser.py')
 
         spec = importlib.util.spec_from_file_location("LimitingUser.LimitingUser", path_to_run_script)
-        self.__limiting_user = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(self.__limiting_user)
+        self.__limiting_user_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.__limiting_user_module)
+        self.__LimitingUser = self.__limiting_user_module.LimitingUser()
 
         self.__ban_file_path = os.path.join(os.path.expanduser(os.getenv('USERPROFILE')), "ban_timeot.txt")
 
@@ -47,6 +49,13 @@ class Engine:
         spec.loader.exec_module(self.__time_performance)
 
         path_to_common_scripts = os.path.dirname(os.path.realpath(__file__))
+        path_to_common_scripts = os.path.join(path_to_common_scripts, 'Common')
+        path_to_common_scripts = os.path.join(path_to_common_scripts, 'User.py')
+        spec = importlib.util.spec_from_file_location("User.User", path_to_common_scripts)
+        self.__user = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.__user)
+
+        path_to_common_scripts = os.path.dirname(os.path.realpath(__file__))
         path_to_common_scripts = os.path.join(path_to_common_scripts, 'Actions')
         path_to_common_scripts = os.path.join(path_to_common_scripts, 'MainBanInspector.py')
         spec = importlib.util.spec_from_file_location("MainBanInspector.MainBanInspector", path_to_common_scripts)
@@ -54,6 +63,11 @@ class Engine:
         spec.loader.exec_module(self.__main_ban_inspector)
 
         self.__DB_Path = os.path.join(os.path.expanduser(os.getenv('USERPROFILE')), "my_sqlite_3.db")
+
+
+    scheduler_seconds_delay = property(lambda self: self.__Scheduler_Delay)
+    """
+    """
 
     def remove_ban_file(self):
         """
@@ -67,23 +81,23 @@ class Engine:
 
         :return:
         """
-        user = "Ogurchuk"
-        lim_user = self.__limiting_user.LimitingUser()
+        user_name = "Ogurchuk"
         mail = self.__reeading_from_gmail.Mailing()
         tp = self.__time_performance.TimePerformance()
         newest_current_time = tp.get_utc()
-
         db = self.__db_performance.DBPerformance(self.__DB_Path)
-        db.crete_tables()
-        if db.get_blocked() is 0:
-            if mail.is_online() is False:
-                db.close()
+        # lim_user = self.__limiting_user.LimitingUser(db)
+
+        user = self.__user.User.get_user(db, user_name)
+
+        if user.blocked_state is False:
+            if user.online_permission is False:
                 self.do_ban()
                 return
 
-            main_ban_inspec = self.__main_ban_inspector.MainBanInspector(db, newest_current_time)
-            if main_ban_inspec.is_triggered():
-                lim_user.baning_user(user)
+            main_ban_inspector = self.__main_ban_inspector.MainBanInspector(user, newest_current_time)
+            if main_ban_inspector.is_triggered():
+                self.ban_user(user, newest_current_time)
 
             # Check time limits
             # seconds_delay = 100
@@ -115,11 +129,10 @@ class Engine:
             return
         else:
             if str(body).find("BAN") != -1:
-                lim_user.baning_user(user)
+                self.ban_user(user, newest_current_time)
             elif str(body).find("RECOVER") != -1:
-                lim_user.recover_user(user, newest_current_time)
+                self.recover_user(user, newest_current_time)
             else:
-                # db.close()
                 return
 
     def do_ban(self):
@@ -145,7 +158,33 @@ class Engine:
             fh.write(str(num))
             return
 
+    def ban_user(self, user, current_time):
+        """
+
+        :param user:
+        :param current_time:
+        :return:
+        """
+        self.__LimitingUser.baning_user(user)
+        user.start_session_time = current_time
+        user.start_session_time = current_time
+        user.blocked_state = True
+        self.__user.User.update_user(self.__db_performance, user)
+
+    def recover_user(self, user, current_time):
+        """
+
+        :param user:
+        :param current_time:
+        :return:
+        """
+        self.__LimitingUser.recover_user(user)
+        user.start_session_time = current_time
+        user.start_session_time = current_time
+        user.blocked_state = False
+        self.__user.User.update_user(self.__db_performance, user)
+
 
 if __name__ == "__main__":
-    limit_user = Engine()
+    limit_user = Engine(60)
     limit_user.run()

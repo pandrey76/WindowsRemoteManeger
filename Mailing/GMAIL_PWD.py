@@ -4,7 +4,7 @@ Created on Aug 27, 2016
 '''
 
 MAIN_EMAIL = "pinchukandreyurevich76@gmail.com"
-GMAIL_PWD = "Pandrey766174986"
+GMAIL_PWD = ""
 FROM_WHO = "Prapor"
 
 

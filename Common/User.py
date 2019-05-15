@@ -36,7 +36,10 @@ class User:
 
         :return:
         """
-        return self.__BlockedState
+        if self.__BlockedState == 0:
+            return False
+        else:
+            return True
 
     @blocked_state.setter
     def blocked_state(self, param):
@@ -53,7 +56,10 @@ class User:
 
         :return:
         """
-        return self.__OnlinePermission
+        if self.__OnlinePermission == 0:
+            return False
+        else:
+            return True
 
     @online_permission.setter
     def online_permission(self, param):

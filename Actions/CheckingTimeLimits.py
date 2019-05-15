@@ -11,11 +11,11 @@ spec1.loader.exec_module(ban_action)
 
 class CheckingTimeLimits(ban_action.BanAction):
 
-    def __init__(self, db, current_time):
+    def __init__(self, user, current_time):
         """
 
         """
-        super().__init__(db)
+        super().__init__(user)
         self.__CurrentTime = current_time
 
     def is_triggered(self):
@@ -23,9 +23,11 @@ class CheckingTimeLimits(ban_action.BanAction):
 
         :return:
         """
-        tp = self.__time_performance.TimePerformance()
-        current_time = tp.get_utc()
-        lst = time.localtime(current_time)
+        # tp = self.__time_performance.TimePerformance()
+        # current_time = tp.get_utc()
+        # lst = time.localtime(current_time)
+
+        lst = time.localtime(self.__CurrentTime)
         if (0 <= lst.tm_hour) & (lst.tm_hour <= 8):
             return True
         else:

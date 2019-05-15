@@ -110,9 +110,6 @@ if __name__ == '__main__':
 
     db = DBPerformance("my_sql_db6.db")
     db.crete_tables()
-
-
-
     db.blocked(True)
     block_status = db.get_blocked()
     print(block_status, type(block_status))
