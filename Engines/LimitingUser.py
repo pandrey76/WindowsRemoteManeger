@@ -69,7 +69,6 @@ class LimitingUser:
         # user.current_time = st_time
 
 
-
 if __name__ == "__main__":
     limit_user = LimitingUser()
     # limit_user.recover_user("Ogurchuk")

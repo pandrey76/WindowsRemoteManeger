@@ -6,12 +6,12 @@ class User:
 
     """
 
-    def __init__(self, name, blocked_state, online_permission, work_seconds_delay, start_session_time, current_time):
+    def __init__(self, name, blocked_state, offline_permission, work_seconds_delay, start_session_time, current_time):
         """
 
         :param name:
         :param blocked_state:
-        :param online_permission:
+        :param offline_permission:
         :param work_seconds_delay:
         :param start_session_time:
         :param current_time:
@@ -21,7 +21,7 @@ class User:
             raise TypeError()
 
         self.__BlockedState = blocked_state
-        self.__OnlinePermission = online_permission
+        self.__OnlinePermission = offline_permission
         self.__WorkSecondsDelay = work_seconds_delay
         self.__StartSessionTime = start_session_time
         self.__CurrentTime = current_time
@@ -51,7 +51,7 @@ class User:
         self.__BlockedState = param
 
     @property
-    def online_permission(self):
+    def offline_permission(self):
         """
 
         :return:
@@ -61,8 +61,8 @@ class User:
         else:
             return True
 
-    @online_permission.setter
-    def online_permission(self, param):
+    @offline_permission.setter
+    def offline_permission(self, param):
         """
 
         :param param:
@@ -157,7 +157,7 @@ class User:
                                                                                               None,
                                                                                               user.name,
                                                                                               user.blocked_state,
-                                                                                              user.online_permission,
+                                                                                              user.offline_permission,
                                                                                               user.work_seconds_delay,
                                                                                               user.start_session_time,
                                                                                               user.current_time))
@@ -214,6 +214,6 @@ class User:
                                                                             user.name
                                                                          ))
 
-            db_instance.cursor.commit()
+            db_instance.connection.commit()
         except sqlite3.Error as ex:
             pass  # print(ex)

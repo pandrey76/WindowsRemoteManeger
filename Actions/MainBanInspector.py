@@ -16,6 +16,7 @@ class MainBanInspector(ban_action.BanAction):
         """
         super().__init__(user)
         self.__CurrentTime = current_time
+        self.__User = user
         self.__MainArray = []
 
         path_to_common_scripts = os.path.dirname(os.path.realpath(__file__))
@@ -25,7 +26,7 @@ class MainBanInspector(ban_action.BanAction):
                                                       path_to_common_scripts)
         obj_1 = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(obj_1)
-        self.__MainArray.append(obj_1.CheckingTimeLimits(self.data_base_handle, current_time))
+        self.__MainArray.append(obj_1.CheckingTimeLimits(self.__User, current_time))
 
         path_to_common_scripts = os.path.dirname(os.path.realpath(__file__))
         path_to_common_scripts = os.path.join(path_to_common_scripts, 'CheckingAllowedTimeInterval.py')
@@ -34,7 +35,7 @@ class MainBanInspector(ban_action.BanAction):
                                                       path_to_common_scripts)
         obj_2 = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(obj_2)
-        self.__MainArray.append(obj_2.CheckingAllowedTimeInterval(self.data_base_handle, current_time))
+        self.__MainArray.append(obj_2.CheckingAllowedTimeInterval(self.__User, current_time))
 
         path_to_common_scripts = os.path.dirname(os.path.realpath(__file__))
         path_to_common_scripts = os.path.join(path_to_common_scripts, 'CheckingChangingSystemTimeByUser.py')
@@ -43,7 +44,7 @@ class MainBanInspector(ban_action.BanAction):
                                                     path_to_common_scripts)
         obj_3 = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(obj_3)
-        self.__MainArray.append(obj_3.CheckingChangingSystemTimeByUser(self.data_base_handle, current_time))
+        self.__MainArray.append(obj_3.CheckingChangingSystemTimeByUser(self.__User, current_time))
 
     current_time = property(lambda self: self.__CurrentTime)
     """

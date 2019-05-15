@@ -60,10 +60,6 @@ class PythonTaskSvc(win32serviceutil.ServiceFramework):
 if __name__ == '__main__':
     win32serviceutil.HandleCommandLine(PythonTaskSvc)  
     
-
-
-
-
 #===============================================================================
 # python Task_Scheduler_Svc.py install
 # python Task_Scheduler_Svc.py remove

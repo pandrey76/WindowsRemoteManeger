@@ -64,7 +64,6 @@ class Engine:
 
         self.__DB_Path = os.path.join(os.path.expanduser(os.getenv('USERPROFILE')), "my_sqlite_3.db")
 
-
     scheduler_seconds_delay = property(lambda self: self.__Scheduler_Delay)
     """
     """
@@ -89,40 +88,26 @@ class Engine:
         # lim_user = self.__limiting_user.LimitingUser(db)
 
         user = self.__user.User.get_user(db, user_name)
-
+        if user is None:
+            user = self.__user.User(
+                                        name=user_name,
+                                        blocked_state=False,
+                                        offline_permission=True,
+                                        work_seconds_delay=100,
+                                        start_session_time=newest_current_time,
+                                        current_time=newest_current_time
+                                    )
+            self.__user.User.create_user(db, user)
+            return
         if user.blocked_state is False:
-            if user.online_permission is False:
-                self.do_ban()
-                return
+            if user.offline_permission is False:
+                if mail.is_online() is False:
+                    self.do_ban(user, newest_current_time)
 
             main_ban_inspector = self.__main_ban_inspector.MainBanInspector(user, newest_current_time)
             if main_ban_inspector.is_triggered():
                 self.ban_user(user, newest_current_time)
 
-            # Check time limits
-            # seconds_delay = 100
-            # new_ct_time = ntp.get_utc()
-            # st_time, cr_time = db.get_all_times()
-            #
-            # if st_time is None or cr_time is None or int(st_time) is 0:
-            #     if new_ct_time is None:
-            #         new_ct_time = time.time()
-            #     db.start_time(new_ct_time)
-            #     db.cur_time(new_ct_time)
-            #     db.close()
-            #     return
-            # if new_ct_time is None:
-            #     cr_time += 70
-            #     db.cur_time(cr_time)
-            #     if cr_time > st_time + seconds_delay:
-            #         db.close()
-            #         lim_user.baning_user(user)
-            #         return
-            # else:
-            #     if new_ct_time > st_time + seconds_delay:
-            #         db.close()
-            #         lim_user.baning_user(user)
-            #         return
         mail.read_unseen_mail()
         body = mail.mail_body
         if body is None:
@@ -135,7 +120,7 @@ class Engine:
             else:
                 return
 
-    def do_ban(self):
+    def do_ban(self, user, current_time):
         """
 
         :return:
@@ -145,8 +130,9 @@ class Engine:
             with open(self.__ban_file_path, 'rt') as fh:
                 num = int(fh.read())
             if num > self.__ban_timeout:
-                limit_user = self.__limiting_user.LimitingUser()
-                limit_user.baning_user("Ogurchuk")
+                # limit_user = self.__limiting_user.LimitingUser()
+                # limit_user.baning_user("Ogurchuk")
+                self.ban_user(user, current_time)
                 self.remove_ban_file()
                 return
         except IOError:
@@ -169,7 +155,8 @@ class Engine:
         user.start_session_time = current_time
         user.start_session_time = current_time
         user.blocked_state = True
-        self.__user.User.update_user(self.__db_performance, user)
+        db = self.__db_performance.DBPerformance(self.__DB_Path)
+        self.__user.User.update_user(db, user)
 
     def recover_user(self, user, current_time):
         """
@@ -182,7 +169,8 @@ class Engine:
         user.start_session_time = current_time
         user.start_session_time = current_time
         user.blocked_state = False
-        self.__user.User.update_user(self.__db_performance, user)
+        db = self.__db_performance.DBPerformance(self.__DB_Path)
+        self.__user.User.update_user(db, user)
 
 
 if __name__ == "__main__":

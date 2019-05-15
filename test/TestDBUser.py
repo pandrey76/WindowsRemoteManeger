@@ -39,7 +39,7 @@ class TestDBUser(unittest.TestCase):
 
         user1 = self.__UserModule.User(self.__UserName,
                                        True,         # blocked_state
-                                       False,        # online_permission
+                                       False,        # offline_permission
                                        7200,         # work_seconds_delay
                                        time.time(),  # start_session_time
                                        time.time() + 200     # current_time
@@ -58,10 +58,27 @@ class TestDBUser(unittest.TestCase):
         user = self.__UserModule.User.get_user(self.__DB, user_name)
         self.assertEqual(user.name, user_name)
         self.assertEqual(user.blocked_state, True)
-        self.assertEqual(user.online_permission, False)
+        self.assertEqual(user.offline_permission, False)
         self.assertEqual(user.work_seconds_delay, 7200)
         # self.assertTrue(user.name, user_name)
 
+    def test_update_user_from_db(self):
+        """
+
+        :return:
+        """
+        user_name = "Admin1"
+        user = self.__UserModule.User.get_user(self.__DB, user_name)
+        user.blocked_state = False
+        user.offline_permission = True
+        user.work_seconds_delay = 3600
+        self.__UserModule.User.update_user(self.__DB, user
+                                           )
+        user = self.__UserModule.User.get_user(self.__DB, user_name)
+        self.assertEqual(user.name, user_name)
+        self.assertEqual(user.blocked_state, False)
+        self.assertEqual(user.offline_permission, True)
+        self.assertEqual(user.work_seconds_delay, 3600)
 
 if __name__ == '__main__':
     unittest.main()
