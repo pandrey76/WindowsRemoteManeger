@@ -50,6 +50,10 @@ class MainBanInspector(ban_action.BanAction):
     """
     """
 
+    current_user = property(lambda self: self.__User)
+    """
+    """
+
     def is_triggered(self):
         """
 
