@@ -62,7 +62,7 @@ class Engine:
         self.__main_ban_inspector = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(self.__main_ban_inspector)
 
-        self.__DB_Path = os.path.join(os.path.expanduser(os.getenv('USERPROFILE')), "my_sqlite_3.db")
+        self.__DB_Path = os.path.join(os.path.expanduser(os.getenv('USERPROFILE')), "my_sqlite_2019_06_29_v1.db")
         self.__CurrentTime = None
         self.__CurrentUser = None
 
@@ -130,7 +130,7 @@ class Engine:
                                         name=user_name,
                                         blocked_state=False,
                                         offline_permission=True,
-                                        work_seconds_delay=300,# 7200
+                                        work_seconds_delay=7200,
                                         start_session_time=self.current_time,
                                         current_time=self.current_time
                                     )
@@ -154,6 +154,8 @@ class Engine:
                 self.ban_user()
             elif str(body).find("RECOVER") != -1:
                 self.recover_user()
+            elif str(body).find("LOGOFF") != -1:
+                self.logoff_all_users()
             else:
                 return
 
@@ -207,7 +209,14 @@ class Engine:
         self.__user.User.update_user(db, self.current_user)
         db.close()
 
+    def logoff_all_users(self):
+        """
 
+        :return:
+        """
+        self.__LimitingUser.logoff_all_users()
+        
+     
 if __name__ == "__main__":
     limit_user = Engine(60)
     limit_user.run()

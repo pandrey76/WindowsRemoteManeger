@@ -1,6 +1,6 @@
-function RemoveUserBan()
+function Remove-UserBan()
 {
     Clear-AssignedAccess
 }
 
-RemoveUserBan
+Remove-UserBan

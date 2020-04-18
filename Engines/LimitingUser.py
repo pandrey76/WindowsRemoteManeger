@@ -68,9 +68,25 @@ class LimitingUser:
         # user.start_session_time = st_time
         # user.current_time = st_time
 
+    def logoff_all_users(self):
+        """
+            :param user:
+            :param st_time:
+            :return:
+        """
+        ps_logoff_all_users_path = self.__ps_dir
+        ps_logoff_all_users_path = os.path.join(ps_logoff_all_users_path, "Logoff-AllUsers.ps1")
+        run_ps_scripts = self.__windows_ps_user_operation.RunPowerShellScript()
+        run_ps_scripts.run_script(ps_logoff_all_users_path)
+
+        # user.blocked_state = False
+        # self.__DB.blocked(False)
+        # user.start_session_time = st_time
+        # user.current_time = st_time
 
 if __name__ == "__main__":
     limit_user = LimitingUser()
     # limit_user.recover_user("Ogurchuk")
-    limit_user.baning_user("Ogurchuk")
+    #limit_user.baning_user("Ogurchuk")
+    limit_user.logoff_all_users()
 
