@@ -1,4 +1,4 @@
-LogoffUser.ps1
+./LogoffUser.ps1
 function GetPackageFamilyName([String]$patern, [String]$user)
 {
     $apx_package = Get-AppxPackage -User $user

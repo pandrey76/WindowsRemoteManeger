@@ -34,20 +34,46 @@ class RunPowerShellScript:
 
         os.system(run_string)
 
-    def run_ps(self, full_path_2_ps, arg):
+    def run_ps_script(self, full_script_path, args):
+        """
+
+        :param full_script_path:
+        :param args:
+        :return:
+        """
+        space = ' '
+        run_string = self.__PowerShell
+        run_string += space
+
+        run_string += '"'
+
+        run_string += full_script_path
+
+        run_string += '"'
+
+        if len(args) > 0:
+            for ar in args:
+                run_string += space
+                run_string += '"'
+                run_string += ar
+                run_string += '"'
+
+        os.system(run_string)
+
+    def run_ps(self, full_path_2_ps, args):
         """
 
         """
         cmd_arg = [self.__PowerShell, full_path_2_ps]
-        if len(arg) > 0:
-            for ar in arg:
+        if len(args) > 0:
+            for ar in args:
                 cmd_arg.append(ar)
         process = Popen(cmd_arg, stdout=PIPE)
         data = process.communicate()
-        # for line in data:
-        #    print(line)
+        for line in data:
+            print(line)
         code = process.wait()
-        # print(code)  # 0
+        print(code)  # 0
 
 
 def get_calculater_appid():
@@ -99,9 +125,12 @@ def block_user(user):
 
 if __name__ == "__main__":
     run_script = RunPowerShellScript()
-    run_script.run_script("..//PS//RecoverUserFromBan.ps1")
-    #run_script.run_script("..//PS//BanUser.ps1")
-    run_script.run_script("..//PS//LogoffUser.ps1")
-
+    # run_script.run_script("..//PS//RecoverUserFromBan.ps1")
+    # run_script.run_ps("../PS/RecoverUserFromBan.ps1", [])
+    # run_script.run_script("..//PS//BanUser.ps1")
+    # run_script.run_script("..//PS//LogoffUser.ps1")
+    arg = ["TempUser"]
+    run_script.run_ps("../PS/LogoffUser.ps1", arg)
+    # run_script.run_ps("../PS/BanUser.ps1", arg)
     #print(os.path.expanduser(os.getenv('USERPROFILE')))
     #print(get_calculater_appid())
