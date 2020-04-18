@@ -135,6 +135,6 @@ function LogoffCurrentUser()
 }
 
 #Get-Quser -Username Ogurchuk -Logoff
-Get-Quser-v2 -user "Ogurchuk"
+Get-Quser-v2 -user $args[0]
 #Get-ULogged -ComputerName $env:COMPUTERNAME
 #LogoffCurrentUser

@@ -1,7 +1,8 @@
 import os
-import codecs
+from subprocess import PIPE, Popen
 
-#from chardet.universaldetector import UniversalDetector
+# import codecs
+# from chardet.universaldetector import UniversalDetector
 
 
 class RunPowerShellScript:
@@ -32,6 +33,21 @@ class RunPowerShellScript:
         run_string += '"'
 
         os.system(run_string)
+
+    def run_ps(self, full_path_2_ps, arg):
+        """
+
+        """
+        cmd_arg = [self.__PowerShell, full_path_2_ps]
+        if len(arg) > 0:
+            for ar in arg:
+                cmd_arg.append(ar)
+        process = Popen(cmd_arg, stdout=PIPE)
+        data = process.communicate()
+        # for line in data:
+        #    print(line)
+        code = process.wait()
+        # print(code)  # 0
 
 
 def get_calculater_appid():

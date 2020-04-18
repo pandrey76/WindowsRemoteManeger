@@ -20,4 +20,4 @@ function BanCurrentUser([String]$user)
     Get-Quser-v2 -user $user
 }
 
-BanCurrentUser -user "Ogurchuk"
+BanCurrentUser -user $args[0]
