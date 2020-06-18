@@ -143,7 +143,8 @@ class Engine:
 
             main_ban_inspector = self.__main_ban_inspector.MainBanInspector(self.current_user, self.current_time)
             if main_ban_inspector.is_triggered():
-                self.ban_user()
+                # self.ban_user()
+                self.logoff_all_users()
 
         mail.read_unseen_mail()
         body = mail.mail_body
@@ -171,8 +172,10 @@ class Engine:
             if num > self.__ban_timeout:
                 # limit_user = self.__limiting_user.LimitingUser()
                 # limit_user.baning_user("Ogurchuk")
-                self.ban_user()
-                self.remove_ban_file()
+
+                self.logoff_all_users()
+                # self.ban_user()
+                # self.remove_ban_file()
                 return
         except IOError:
             with open(self.__ban_file_path, 'wt') as fh:
