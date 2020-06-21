@@ -14,6 +14,8 @@ import win32event
 import os
 import os.path
 import importlib.util
+import traceback
+import datetime
 
 
 class PythonTaskSvc(win32serviceutil.ServiceFramework):
@@ -40,9 +42,22 @@ class PythonTaskSvc(win32serviceutil.ServiceFramework):
             try:
                 engine = self.__activate_engine.Engine(60)
                 engine.run()
-            except Exception as er:
+            # except Exception as er:
+            #     with open("c:\\13.txt", 'a') as g:
+            #         g.write(str(er))
+            #         g.write(os.linesep)
+            except:
                 with open("c:\\13.txt", 'a') as g:
-                    g.write(str(er))
+                    separate = "************************"
+                    space = ' '
+                    result_str = separate + space + str(datetime.datetime.now()) + space + separate
+                    result_str += os.linesep
+                    result_str += traceback.format_exc()
+                    result_str += os.linesep
+                    result_str += separate
+                    result_str += separate
+                    result_str += separate
+                    g.write(result_str)
                     g.write(os.linesep)
 
         schedule.every(1).minutes.do(job)
