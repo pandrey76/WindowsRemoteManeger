@@ -77,3 +77,29 @@
 14. Выводит кучу всего по зарегистрированным пользователям, надо разобтрать.
 
     Get-WmiObject Win32_LoggedOnUser -ComputerName $env:COMPUTERNAME
+
+15. Change account password using PowerShell
+
+Open Start.
+
+Search for PowerShell, right-click the top result, and select Run as administrator.
+
+Type the following command to list all the available accounts and press Enter:
+
+    Get-LocalUser
+
+Type the following command to create and store the new password inside of a variable and press Enter:
+
+    $Password = Read-Host "Enter the new password" -AsSecureString
+
+Type the new password for the account and press Enter.
+
+Type the following command and press Enter on each line to apply the new password to the local account:
+
+    $UserAccount = Get-LocalUser -Name "admin"
+    $UserAccount | Set-LocalUser -Password $Password
+
+In the second command, make sure to replace “admin” with the name of the account that you want to reset its password.
+
+Once you’ve completed the steps, sign out and sign back into your Windows 10 account using the new password.
+
