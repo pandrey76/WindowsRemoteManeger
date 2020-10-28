@@ -103,3 +103,16 @@ In the second command, make sure to replace “admin” with the name of the acc
 
 Once you’ve completed the steps, sign out and sign back into your Windows 10 account using the new password.
 
+15. Create user
+
+PS C:\WINDOWS\system32> $Password = Read-Host -AsSecureString
+*****
+PS C:\WINDOWS\system32> New-LocalUser "TempUser" -Password $Password -FullName "Prapor" -Description "Some user"
+
+Name     Enabled Description
+----     ------- -----------
+TempUser True    Some user
+
+16. Added user in Group
+
+PS C:\WINDOWS\system32> Add-LocalGroupMember -Group "Пользователи" -Member "TempUser"
