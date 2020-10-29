@@ -126,3 +126,4 @@ if __name__ == '__main__':
     print(st1, type(st1), ct1, type(ct1))
     db.close()
 
+
