@@ -131,4 +131,24 @@ C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\AssignedAccess\AssignedAccess
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\RawData]
 //////////////////////////////////////////////////////////////
 
+
+После удачного снятия ограничений в реестре остаются записи:
+
+//////////////////////////////////////////////////////////////
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration]
+"V1SubVersion"=dword:00000001
+"Version"=dword:00000002
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Configs]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\GroupConfigs]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Profiles]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Snapshot]
+"Status"=dword:00000003
+//////////////////////////////////////////////////////////////
+
 ##############################################################
