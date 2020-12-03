@@ -132,3 +132,15 @@ $UpFolder = "cd ..\"
 PS C:\WINDOWS\system32> Invoke-Expression $UpFolder 
 
 ####################################################
+
+19. Checking for user in groupe of administrator
+####################################################
+
+ $NetEXE = $env:SystemDrive + "\windows\system32\net.exe localgroup administrators"
+ $UserStringFromNetCommand = Invoke-Expression $NetEXE | Where {$_ -eq $UserNameSuffix}
+     if(!([String]::IsNullOrEmpty($UserStringFromNetCommand)))
+    {
+        throw $SCStringTable.ErrorUserNotFound
+    }
+    
+####################################################    
