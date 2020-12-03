@@ -30,3 +30,4 @@ def send_gmail(msg_str):
 if __name__ == '__main__':
     #send_gmail("BAN")
     send_gmail("RECOVER")
+

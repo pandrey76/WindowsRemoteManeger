@@ -18,3 +18,4 @@ class BanAction:
         """
         raise Exception("No implement")
 
+

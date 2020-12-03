@@ -217,3 +217,4 @@ class User:
             db_instance.connection.commit()
         except sqlite3.Error as ex:
             pass  # print(ex)
+

@@ -1,0 +1,154 @@
+1. Change Windows password for a local user
+##############################################################
+Run Command Prompt as an administrator, or start Windows 10 in safe mode with Command Prompt at the login screen.
+Type:
+    net user USERNAME NEWPASS
+where you need to replace USERNAME and NEWPASS with the actual username and a new password for this user.
+If the actual username consists of more than two words, place it inside quotation marks.
+Hit:  Enter.
+##############################################################
+
+2. Change Windows password for a local user and type new password in console
+##############################################################
+Open Start on Windows 10.
+
+Search for Command Prompt, right-click the top result, and select the Run as administrator option.
+
+Type the following command to list all the available accounts and press Enter:
+
+    net user
+
+Type the following command to change the account password and press Enter:
+
+    net user USERNAME *
+
+Type a new password for the user and press Enter.
+
+Type the the new password again to confirm and press Enter.
+##############################################################
+
+3. Запретить (разрешить) запуск определенных программ в редакторе реестра
+##############################################################
+О1. В строке поиска или в меню выполнить (выполнить вызывается клавишами Win+R) введите команду regedit и
+нажмите клавишу Enter.
+02. Перейдите по пути
+    HKEY_CURRENT_USER\ Software\ Microsoft\ Windows\ CurrentVersion\ Policies\ =>
+В разделе Policies откройте раздел Explorer, если его нет - нажмите на раздел Policies правой клавишей,
+выберите "Создать" => "Раздел" => назовите его Explorer => нажмите на раздел Explorer правой клавишей мыши,
+выберите "Создать" => "Параметр DWORD (32 Бита) =>
+    если вы хотите запретить определенные программы - назовите новый параметр DisallowRun ,
+    если вы хотите чтобы запускались только определенные программы, а остальные были под запретом - назовите новый
+    параметр RestrictRun
+03. Откройте параметр RestrictRun или DisallowRun => в поле "Значение" введите 1 и нажмите клавишу Enter.
+04. Нажмите на раздел Explorer правой клавишей мыши, выберите "Создать" => "Раздел" =>
+    если вы хотите запретить определенные программы - назовите новый раздел DisallowRun ,
+    если вы хотите разрешить запуск определенных программ - назовите новый раздел RestrictRun
+05. Нажмите на раздел RestrictRun или DisallowRun правой клавишей мыши, выберите "Создать" =>
+"Строковый параметр" => назовите новый параметр 1
+06. Важно: в некоторых версиях Windows данные действия запрещают сами групповые политики, также перестает
+открываться диспетчер задач и редактор реестра, что в свою очередь не дает вернуть все как было и приходится все
+исправлять в дополнительных параметрах загрузки системы. Чтобы такого не произошло - добавляйте в список
+разрешенных gpedit.msc и regedit.exe. Откройте созданный параметр => в поле "Значение" введите имя исполняемого файла
+программы, которую вы хотите запретить (разрешить). В нашем примере мы запрещаем (разрешаем) программу "Блокнот",
+имя исполняемого файла notepad.exe => в поле "Значение вводим notepad.exe и нажимаем на "ОК".
+07. Повторите 5 и 6 пункт с инструкции столько раз, сколько нужно программ вам запретить или разрешить.
+Следующие создаваемые параметры называйте цифрами по порядку ( 2, 3, 4 ...).
+08. Закройте редактор реестра и перезагрузите компьютер, чтобы изменения вступили в силу.
+
+Добавлять надо в другую ветвь реестра, а точнее сначало находишь SID нужного пользователя, а потом к ниму в ветвь
+записываешь правила и ограничения:
+Компьютер\HKEY_USERS\S-1-5-21-2772757386-1096924173-1001\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer
+S-1-5-21-2772757386-1096924173-1001 - SID пользователя
+
+Эти правила не действуют для приложений, которые могут быть ограничены с помощью командлета Set-AssignedAccess, т.к.
+Microsoft Calculator, Microsoft Edge и т.д., т.е. приложения из киоска Microsoft Windows.
+##############################################################
+
+4. Отмена действия командлета Set-AssignedAccess.
+##############################################################
+По каким-то непоняитным мне причинам, перестал работать командлет снятия ограничений
+
+     Clear-AssignedAccess
+
+    Выдаёт ошибку:
+//////////////////////////////////////////////////////////////
+Remove-CimInstance : Произошла общая ошибка, для которой нет более конкретного кода.
+C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\AssignedAccess\AssignedAccess.psm1:338 знак:25
++             $instance | Remove-CimInstance -Confirm:$false
++                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WEDL_AssignedAc...73-41518965...):CimInstance) [Remove-CimInstance], CimE
+   xception
+    + FullyQualifiedErrorId : MI RESULT 1,Microsoft.Management.Infrastructure.CimCmdlets.RemoveCimInstanceCommand
+//////////////////////////////////////////////////////////////
+
+При этом ограничения не снимаются.
+
+В нашем случае назначается приложение по умолчанию (Калькулятр).
+
+Экспериментально было определено, что удаление следующего раздела
+реестра "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration" снимает эти ограничения.
+
+Далее представлено содержимое экпортируемого в файл с расширением *.reg данного раздела.
+Теоретически можно добавить содержимое данного файла в реестр и тем самым снова назначить ограничения,
+без использования PowerShell командлетов.
+
+//////////////////////////////////////////////////////////////
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration]
+"V1SubVersion"=dword:00000001
+"Version"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Configs]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Configs\S-1-5-21-2772757386-1096924173-415189654-1002]
+"DefaultProfileId"="{CE0E0923-3886-4917-8069-14657C862110}"
+"ConfigSource"=dword:00000003
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Configs\S-1-5-21-2772757386-1096924173-415189654-1002\Account]
+"Id"="S-1-5-21-2772757386-1096924173-415189654-1002"
+"Name"=""
+"Type"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\GroupConfigs]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Profiles]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Profiles\{CE0E0923-3886-4917-8069-14657C862110}]
+"ProfileId"="{CE0E0923-3886-4917-8069-14657C862110}"
+"Timestamp"=hex(b):59,0e,94,89,ee,f5,d4,01
+"IsSingleAppProfile"=dword:00000001
+"TaskbarAllowed"=dword:00000000
+"AllAppListAllowed"=dword:00000000
+"StartLayoutPolicy"=""
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Profiles\{CE0E0923-3886-4917-8069-14657C862110}\AllowedApps]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Profiles\{CE0E0923-3886-4917-8069-14657C862110}\AllowedApps\App0]
+"AppId"="Microsoft.WindowsCalculator_8wekyb3d8bbwe!app"
+"Publisher"="*"
+"Arguments"=""
+"AppType"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\RawData]
+//////////////////////////////////////////////////////////////
+
+
+После удачного снятия ограничений в реестре остаются записи:
+
+//////////////////////////////////////////////////////////////
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration]
+"V1SubVersion"=dword:00000001
+"Version"=dword:00000002
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Configs]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\GroupConfigs]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Profiles]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\AssignedAccessConfiguration\Snapshot]
+"Status"=dword:00000003
+//////////////////////////////////////////////////////////////
+
+##############################################################

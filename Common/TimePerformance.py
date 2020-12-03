@@ -29,3 +29,4 @@ class TimePerformance:
         if current_utc is None:
             current_utc = time.time()
         return current_utc
+

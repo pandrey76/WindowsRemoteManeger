@@ -40,3 +40,4 @@ class GmailPerformance:
 if __name__ == '__main__':
     mail = GmailPerformance(MAIN_EMAIL, GMAIL_PWD, FROM_WHO)
     mail.send_plaintext("pandrey76@yandex.ru", "Subject", "Hello, world")
+
