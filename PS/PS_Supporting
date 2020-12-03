@@ -1,4 +1,4 @@
-1. Разрешаем выполненеи интерактивных сценариев PS
+﻿1. Разрешаем выполненеи интерактивных сценариев PS
 Ничего не блокируется, никакие предупреждения и запросы не появляются.
 
     Set-ExecutionPolicy Unrestricted
@@ -116,3 +116,8 @@ TempUser True    Some user
 16. Added user in Group
 
 PS C:\WINDOWS\system32> Add-LocalGroupMember -Group "Пользователи" -Member "TempUser"
+
+
+17. Get current script folder
+
+PS C:\WINDOWS\system32> Split-Path -Parent $PSCommandPath
