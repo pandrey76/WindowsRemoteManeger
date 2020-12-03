@@ -121,3 +121,14 @@ PS C:\WINDOWS\system32> Add-LocalGroupMember -Group "Пользователи" -
 17. Get current script folder
 
 PS C:\WINDOWS\system32> Split-Path -Parent $PSCommandPath
+
+
+18. Run command (Invoke-Expression)
+
+Go to up one folder:
+####################################################
+
+$UpFolder = "cd ..\"
+PS C:\WINDOWS\system32> Invoke-Expression $UpFolder 
+
+####################################################
