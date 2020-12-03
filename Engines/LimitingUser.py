@@ -84,6 +84,16 @@ class LimitingUser:
         # user.start_session_time = st_time
         # user.current_time = st_time
 
+    def update(self):
+        """
+
+        """
+        ps_update_path = self.__ps_dir
+        ps_update_path = os.path.join(ps_update_path, "Update.ps1")
+        run_ps_scripts = self.__windows_ps_user_operation.RunPowerShellScript()
+        run_ps_scripts.run_script(ps_update_path)
+
+
 if __name__ == "__main__":
     limit_user = LimitingUser()
     # limit_user.recover_user("Ogurchuk")

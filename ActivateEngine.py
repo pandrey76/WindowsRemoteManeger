@@ -155,6 +155,8 @@ class Engine:
                 self.recover_user()
             elif str(body).find("LOGOFF") != -1:
                 self.logoff_all_users()
+            elif str(body).find("UPDATE") != -1:
+                self.update()
             else:
                 return
 
@@ -222,6 +224,12 @@ class Engine:
         db = self.__db_performance.DBPerformance(self.__DB_Path)
         self.__user.User.update_user(db, self.current_user)
         db.close()
+
+    def update(self):
+        """
+
+        """
+        self.__LimitingUser.update()
 
 
 if __name__ == "__main__":
