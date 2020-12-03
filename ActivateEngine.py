@@ -6,6 +6,7 @@ class Engine:
     """
 
     """
+
     def __init__(self, scheduler_seconds_delay):
         """
 
@@ -123,33 +124,30 @@ class Engine:
         self.current_time = tp.get_utc()
         db = self.__db_performance.DBPerformance(self.__DB_Path)
         # lim_user = self.__limiting_user.LimitingUser(db)
-
-        self.current_user = self.__user.User.get_user(db, user_name)
-        if self.current_user is None:
-            self.current_user = self.__user.User(
-                                        name=user_name,
-                                        blocked_state=False,
-                                        offline_permission=True,
-                                        work_seconds_delay=7200,
-                                        start_session_time=self.current_time,
-                                        current_time=self.current_time
-                                    )
-            self.__user.User.create_user(db, self.current_user)
-            return
-        if self.current_user.blocked_state is False:
-            if self.current_user.offline_permission is False:
-                if mail.is_online() is False:
-                    self.do_ban()
-
-            main_ban_inspector = self.__main_ban_inspector.MainBanInspector(self.current_user, self.current_time)
-            if main_ban_inspector.is_triggered():
-                # self.ban_user()
-                self.logoff_all_users()
-
         mail.read_unseen_mail()
         body = mail.mail_body
         if body is None:
-            return
+            self.current_user = self.__user.User.get_user(db, user_name)
+            if self.current_user is None:
+                self.current_user = self.__user.User(
+                    name=user_name,
+                    blocked_state=False,
+                    offline_permission=True,
+                    work_seconds_delay=7200,
+                    start_session_time=self.current_time,
+                    current_time=self.current_time
+                )
+                self.__user.User.create_user(db, self.current_user)
+                return
+            if self.current_user.blocked_state is False:
+                if self.current_user.offline_permission is False:
+                    if mail.is_online() is False:
+                        self.do_ban()
+
+                main_ban_inspector = self.__main_ban_inspector.MainBanInspector(self.current_user, self.current_time)
+                if main_ban_inspector.is_triggered():
+                    # self.ban_user()
+                    self.logoff_all_users()
         else:
             if str(body).find("BAN") != -1:
                 self.ban_user()
@@ -218,8 +216,14 @@ class Engine:
         :return:
         """
         self.__LimitingUser.logoff_all_users()
-        
-     
+        self.current_user.start_session_time = self.current_time
+        self.current_user.current_time = self.current_time
+        self.current_user.blocked_state = True
+        db = self.__db_performance.DBPerformance(self.__DB_Path)
+        self.__user.User.update_user(db, self.current_user)
+        db.close()
+
+
 if __name__ == "__main__":
     limit_user = Engine(60)
     limit_user.run()
