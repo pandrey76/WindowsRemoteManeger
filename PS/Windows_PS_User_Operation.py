@@ -1,9 +1,11 @@
 import os
 from subprocess import PIPE, Popen
+import win32process
 
 # import codecs
 # from chardet.universaldetector import UniversalDetector
 
+from time import sleep
 
 class RunPowerShellScript:
     """
@@ -75,6 +77,22 @@ class RunPowerShellScript:
         code = process.wait()
         print(code)  # 0
 
+    def run_ps_with_dispatching_process(self, full_path_2_ps, seconds_delay):
+        """
+
+        """
+        cmd_arg = [self.__PowerShell, full_path_2_ps]
+        # if len(args) > 0:
+        #     for ar in args:
+        #         cmd_arg.append(ar)
+        # process = Popen(cmd_arg, shell=False, creationflags=win32process.CREATE_NEW_CONSOLE)
+        process = Popen(cmd_arg, shell=False, close_fds = True)
+        sleep(seconds_delay)
+        # data = process.communicate()
+        # for line in data:
+        #     print(line)
+        # code = process.wait()
+        # print(code)  # 0
 
 def get_calculater_appid():
     """

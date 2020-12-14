@@ -91,7 +91,7 @@ class LimitingUser:
         ps_update_path = self.__ps_dir
         ps_update_path = os.path.join(ps_update_path, "Update.ps1")
         run_ps_scripts = self.__windows_ps_user_operation.RunPowerShellScript()
-        run_ps_scripts.run_script(ps_update_path)
+        run_ps_scripts.run_ps_with_dispatching_process(ps_update_path, 30)
 
 
 if __name__ == "__main__":
