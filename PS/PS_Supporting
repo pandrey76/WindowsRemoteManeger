@@ -143,4 +143,37 @@ PS C:\WINDOWS\system32> Invoke-Expression $UpFolder
         throw $SCStringTable.ErrorUserNotFound
     }
     
-####################################################    
+####################################################
+
+20. Instruction for setting .ssh folder to system user.
+####################################################
+
+PS C:\Windows\System32\config\systemprofile> ls
+
+
+    Каталог: C:\Windows\System32\config\systemprofile
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----       13.12.2020      1:30                .ssh
+d---s-       19.03.2019      7:52                AppData
+-a----       12.12.2020     23:45          12288 my_sqlite_2019_06_29_v1.db
+
+
+PS C:\Windows\System32\config\systemprofile> (Get-ChildItem -Path .ssh -Include *) | Format-List *                                             PS C:\Windows\System32\config\systemprofile> cd .ssh
+PS C:\Windows\System32\config\systemprofile\.ssh> ls
+PS C:\Windows\System32\config\systemprofile\.ssh> Get-ChildItem -Path C:\Users\admin1\.ssh -Include * | Copy-Item -Destination  C:\Windows\System32\config\systemprofile\.ssh
+PS C:\Windows\System32\config\systemprofile\.ssh> ls
+
+
+    Каталог: C:\Windows\System32\config\systemprofile\.ssh
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----       09.04.2020     12:39           3247 id_rsa
+-a----       09.04.2020     12:39            745 id_rsa.pub
+-a----       13.12.2020      1:00           1672 known_hosts
+
+####################################################
