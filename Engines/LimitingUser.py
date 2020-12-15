@@ -29,6 +29,34 @@ class LimitingUser:
         # self.__User = user
         # self.__DB = db
 
+    def update(self):
+        """
+
+        """
+        ps_update_path = self.__ps_dir
+        ps_update_path = os.path.join(ps_update_path, "Update.ps1")
+        run_ps_scripts = self.__windows_ps_user_operation.RunPowerShellScript()
+        run_ps_scripts.run_ps_with_dispatching_process(ps_update_path, 60)
+
+        # Sending mail
+        path_to_run_script = os.path.dirname(os.path.realpath(__file__))
+        path_to_run_script = os.path.abspath(os.path.join(path_to_run_script, ".." + os.path.sep))
+        path_to_run_script = os.path.join(path_to_run_script, 'Mailing')
+
+        path_to_run_script = os.path.join(path_to_run_script, 'Sending_to_Gmail.py')
+
+        spec = importlib.util.spec_from_file_location("Sending_to_Gmail.Mailing", path_to_run_script)
+        from_gmail = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(from_gmail)
+
+        now = datetime.datetime.now()
+        # print("Current date and time : ")
+        for_mailing_string = "Service is Updating!" + " " + now.strftime("%Y-%m-%d %H:%M:%S") + os.linesep
+        with open("c:\\PS-ActionStatus.txt") as f:
+            data = f.read()
+        for_mailing_string += data
+        from_gmail.send_gmail(for_mailing_string)
+
     def baning_user(self, user):
         """
 
@@ -84,30 +112,6 @@ class LimitingUser:
         # self.__DB.blocked(False)
         # user.start_session_time = st_time
         # user.current_time = st_time
-
-    def update(self):
-        """
-
-        """
-        ps_update_path = self.__ps_dir
-        ps_update_path = os.path.join(ps_update_path, "Update.ps1")
-        run_ps_scripts = self.__windows_ps_user_operation.RunPowerShellScript()
-        run_ps_scripts.run_ps_with_dispatching_process(ps_update_path, 30)
-
-        # Sending mail
-        path_to_run_script = os.path.dirname(os.path.realpath(__file__))
-        path_to_run_script = os.path.abspath(os.path.join(path_to_run_script, ".." + os.path.sep))
-        path_to_run_script = os.path.join(path_to_run_script, 'Mailing')
-
-        path_to_run_script = os.path.join(path_to_run_script, 'Sending_to_Gmail.py')
-
-        spec = importlib.util.spec_from_file_location("Sending_to_Gmail.Mailing", path_to_run_script)
-        from_gmail = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(from_gmail)
-
-        now = datetime.datetime.now()
-        print("Current date and time : ")
-        from_gmail.send_gmail("Service is Updating!" + " " + now.strftime("%Y-%m-%d %H:%M:%S"))
 
 
 if __name__ == "__main__":
