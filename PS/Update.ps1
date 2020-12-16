@@ -25,9 +25,10 @@ if ($Error) {
     $Error.Clear()
 }
 
-$RunCommnd = "git.exe"
-$ArgsForGettingRemoteReroInfo = "remote show origin"
+$RunCommand = "git.exe"
+$ArgsForGettingRemoteRepoInfo = "remote show origin"
 $ArgsForRunningPullCommand = "pull -v"
+$ArgsForGettingLastRepoCommit = "log --name-status HEAD^..HEAD"
 
 $PSErrorPresentString = "PS return error"
 # Stoping service PythonTaskSvc
@@ -165,11 +166,11 @@ Add-Content -Path $ActionStatusFile -Value "" -Force
 Add-Content -Path $ActionStatusFile -Value "Getting git repo info" -Force
 Add-Content -Path $ActionStatusFile -Value $Splitter -Force
 Add-Content -Path $ActionStatusFile -Value "Running command" -Force
-$FullRunningCommand = "Start-Process -FilePath $RunCommnd -Args $ArgsForGettingRemoteReroInfo  -RedirectStandardOutput $OutputStreamFile -RedirectStandardError $ErrorStreamFile"
+$FullRunningCommand = "Start-Process -FilePath $RunCommand -Args $ArgsForGettingRemoteRepoInfo  -RedirectStandardOutput $OutputStreamFile -RedirectStandardError $ErrorStreamFile"
 Add-Content -Path $ActionStatusFile -Value $FullRunningCommand -Force
 
 #Invoke-Expression $FullRunningCommand
-Start-Process -FilePath $RunCommnd -Args $ArgsForGettingRemoteReroInfo  -RedirectStandardOutput $OutputStreamFile -RedirectStandardError $ErrorStreamFile -Wait
+Start-Process -FilePath $RunCommand -Args $ArgsForGettingRemoteRepoInfo  -RedirectStandardOutput $OutputStreamFile -RedirectStandardError $ErrorStreamFile -Wait
 if ($Error) {
 
     Add-Content -Path $ActionStatusFile -Value $PSErrorPresentString -Force
@@ -228,11 +229,11 @@ Add-Content -Path $ActionStatusFile -Value "" -Force
 Add-Content -Path $ActionStatusFile -Value "git pull command" -Force
 Add-Content -Path $ActionStatusFile -Value $Splitter -Force
 Add-Content -Path $ActionStatusFile -Value "Running command" -Force
-$FullRunningCommand = "Start-Process -FilePath $RunCommnd -Args $ArgsForRunningPullCommand  -RedirectStandardOutput $OutputStreamFile -RedirectStandardError $ErrorStreamFile"
+$FullRunningCommand = "Start-Process -FilePath $RunCommand -Args $ArgsForRunningPullCommand  -RedirectStandardOutput $OutputStreamFile -RedirectStandardError $ErrorStreamFile"
 Add-Content -Path $ActionStatusFile -Value $FullRunningCommand -Force
 
 #Invoke-Expression $FullRunningCommand
-Start-Process -FilePath $RunCommnd -Args $ArgsForRunningPullCommand  -RedirectStandardOutput $OutputStreamFile -RedirectStandardError $ErrorStreamFile -Wait
+Start-Process -FilePath $RunCommand -Args $ArgsForRunningPullCommand  -RedirectStandardOutput $OutputStreamFile -RedirectStandardError $ErrorStreamFile -Wait
 if ($Error) {
 
     Add-Content -Path $ActionStatusFile -Value $PSErrorPresentString -Force
@@ -284,6 +285,63 @@ Add-Content -Path $ActionStatusFile -Value "" -Force
 
 # Start-Process -FilePath "git.exe" -Args "pull -v"  -RedirectStandardOutput $OutputStreamFile -RedirectStandardError $ErrorStreamFile
 # -RedirectStandardInput "c:/Testsort.txt"
+
+######################################
+
+# Get git repo last commit
+######################################
+
+Add-Content -Path $ActionStatusFile -Value "Getting git last commit" -Force
+Add-Content -Path $ActionStatusFile -Value $Splitter -Force
+Add-Content -Path $ActionStatusFile -Value "Running command" -Force
+$FullRunningCommand = "Start-Process -FilePath $RunCommand -Args $ArgsForGettingLastRepoCommit  -RedirectStandardOutput $OutputStreamFile -RedirectStandardError $ErrorStreamFile"
+Add-Content -Path $ActionStatusFile -Value $FullRunningCommand -Force
+
+#Invoke-Expression $FullRunningCommand
+Start-Process -FilePath $RunCommand -Args $ArgsForGettingLastRepoCommit  -RedirectStandardOutput $OutputStreamFile -RedirectStandardError $ErrorStreamFile -Wait
+if ($Error) {
+
+    Add-Content -Path $ActionStatusFile -Value $PSErrorPresentString -Force
+    Add-Content -Path $ActionStatusFile -Value $ErrorSplitter -Force
+    Add-Content -Path $ActionStatusFile -Value ($Error[0].ToString() + $Error[0].InvocationInfo.PositionMessage) -Force
+    Add-Content -Path $ActionStatusFile -Value $ErrorSplitter -Force
+    Add-Content -Path $ActionStatusFile -Value "" -Force
+    Add-Content -Path $ActionStatusFile -Value "" -Force
+    $Error.Clear()
+}
+
+$TempOutPutContent = (Get-Content -Path $OutputStreamFile | Out-String)
+if ($Error) {
+
+    Add-Content -Path $ActionStatusFile -Value $PSErrorPresentString -Force
+    Add-Content -Path $ActionStatusFile -Value $ErrorSplitter -Force
+    Add-Content -Path $ActionStatusFile -Value ($Error[0].ToString() + $Error[0].InvocationInfo.PositionMessage) -Force
+    Add-Content -Path $ActionStatusFile -Value $ErrorSplitter -Force
+    Add-Content -Path $ActionStatusFile -Value "" -Force
+    Add-Content -Path $ActionStatusFile -Value "" -Force
+    $Error.Clear()
+}
+
+Add-Content -Path $ActionStatusFile -Value "Output content" -Force
+Add-Content -Path $ActionStatusFile -Value $TempOutPutContent -Force
+
+$TempErrorContent = (Get-Content -Path $ErrorStreamFile | Out-String)
+if ($Error) {
+
+    Add-Content -Path $ActionStatusFile -Value $PSErrorPresentString -Force
+    Add-Content -Path $ActionStatusFile -Value $ErrorSplitter -Force
+    Add-Content -Path $ActionStatusFile -Value ($Error[0].ToString() + $Error[0].InvocationInfo.PositionMessage) -Force
+    Add-Content -Path $ActionStatusFile -Value $ErrorSplitter -Force
+    Add-Content -Path $ActionStatusFile -Value "" -Force
+    Add-Content -Path $ActionStatusFile -Value "" -Force
+    $Error.Clear()
+}
+
+Add-Content -Path $ActionStatusFile -Value "Error content" -Force
+Add-Content -Path $ActionStatusFile -Value $TempErrorContent -Force
+Add-Content -Path $ActionStatusFile -Value $Splitter -Force
+Add-Content -Path $ActionStatusFile -Value "" -Force
+Add-Content -Path $ActionStatusFile -Value "" -Force
 
 ######################################
 
