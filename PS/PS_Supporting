@@ -177,3 +177,16 @@ Mode                LastWriteTime         Length Name
 -a----       13.12.2020      1:00           1672 known_hosts
 
 ####################################################
+
+
+21. Instruction for adding host to known_hosts file.
+####################################################
+
+PS C:\Windows\System32\config\systemprofile\.ssh> $temp = (ssh-keyscan.exe -H 140.82.121.3 | Out-String)
+# 140.82.121.3:22 SSH-2.0-babeld-78794f53
+# 140.82.121.3:22 SSH-2.0-babeld-78794f53
+# 140.82.121.3:22 SSH-2.0-babeld-78794f53
+
+PS C:\Windows\System32\config\systemprofile\.ssh> Add-Content -Path known_hosts -Value $temp
+
+####################################################
