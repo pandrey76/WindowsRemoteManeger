@@ -1,6 +1,6 @@
 import os.path
 import importlib.util
-
+import re
 
 class Engine:
     """
@@ -149,6 +149,23 @@ class Engine:
                     # self.ban_user()
                     self.logoff_all_users()
         else:
+
+            disable_string = "Disable"
+            enable_string = "Enable"
+            pattern_user_activation = re.compile(r'(' +
+                                                 disable_string +
+                                                 r'|' +
+                                                 enable_string +
+                                                 r')' +
+                                                 r'-LocalUser\s+([A-Za-z0-9_-]*)\s*')
+            match_user_activation = pattern_user_activation.search(body)
+            if match_user_activation.group(2):
+                if match_user_activation.group(1) == disable_string:
+                    self.disable_user(match_user_activation.group(2))
+                elif match_user_activation.group(1) == enable_string:
+                    self.enable_user(match_user_activation.group(2))
+                return
+
             if str(body).find("BAN") != -1:
                 self.ban_user()
             elif str(body).find("RECOVER") != -1:
@@ -230,6 +247,22 @@ class Engine:
 
         """
         self.__LimitingUser.update()
+
+    def disable_user(self, user):
+        """
+
+        :param user:
+        :return:
+        """
+        self.__LimitingUser.disable_user(user)
+
+    def enable_user(self, user):
+        """
+
+        :param user:
+        :return:
+        """
+        self.__LimitingUser.enable_user(user)
 
 
 if __name__ == "__main__":

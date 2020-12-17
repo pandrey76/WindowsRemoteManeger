@@ -8,7 +8,7 @@ class LimitingUser:
 
     """
 
-    def __init__(self ):
+    def __init__(self):
         """
 
         """
@@ -113,11 +113,35 @@ class LimitingUser:
         # user.start_session_time = st_time
         # user.current_time = st_time
 
+    def disable_user(self, user):
+        """
+
+        :param user:
+        :return:
+        """
+        ps_disable_user_path = self.__ps_dir
+        ps_disable_user_path = os.path.join(ps_disable_user_path, "DisableLocalUser.ps1")
+        run_ps_scripts = self.__windows_ps_user_operation.RunPowerShellScript()
+        args = [user]
+        run_ps_scripts.run_ps(ps_disable_user_path, args)
+
+    def enable_user(self, user):
+        """
+
+        :param user:
+        :return:
+        """
+        ps_enable_user_path = self.__ps_dir
+        ps_enable_user_path = os.path.join(ps_enable_user_path, "EnableLocalUser.ps1")
+        run_ps_scripts = self.__windows_ps_user_operation.RunPowerShellScript()
+        args = [user]
+        run_ps_scripts.run_ps(ps_enable_user_path, args)
+
 
 if __name__ == "__main__":
     limit_user = LimitingUser()
     # limit_user.recover_user("Ogurchuk")
-    #limit_user.baning_user("Ogurchuk")
-    limit_user.logoff_all_users()
-
-
+    # limit_user.baning_user("Ogurchuk")
+    # limit_user.logoff_all_users()
+    limit_user.enable_user("Ogurchuk")
+    # limit_user.disable_user("Ogurchuk")
