@@ -7,9 +7,10 @@ import importlib.util
 
 import socket
 
-#MAIN_EMAIL = "pinchukandreyurevich76@gmail.com"
-#GMAIL_PWD = ""
-#FROM_WHO = "Prapor"
+
+# MAIN_EMAIL = "pinchukandreyurevich76@gmail.com"
+# GMAIL_PWD = ""
+# FROM_WHO = "Prapor"
 
 
 class Mailing:
@@ -54,8 +55,8 @@ class Mailing:
         host = "imap.gmail.com"
         port = 993
         user = self.__gmail_pwd.MAIN_EMAIL
-        password = self.__gmail_pwd .GMAIL_PWD
-        sender = self.__gmail_pwd .MAIN_EMAIL
+        password = self.__gmail_pwd.GMAIL_PWD
+        sender = self.__gmail_pwd.MAIN_EMAIL
 
         connection = imaplib.IMAP4_SSL(host=host, port=port)
         connection.login(user=user, password=password)
@@ -63,13 +64,17 @@ class Mailing:
         status, msgs = connection.select('INBOX')
         assert status == 'OK'
 
-        typ, data = connection.search(None, '(UNSEEN)') # , 'FROM', '"%s"' % sender)
+        typ, data = connection.search(None, '(UNSEEN)')  # , 'FROM', '"%s"' % sender)
         try:
             for num in data[0].split():
                 typ, message_data = connection.fetch(num, '(RFC822)')
-                mail = email.message_from_bytes(message_data[0][1])
-                for part in mail.walk():
-                    self.__Body = part.get_payload(decode=True)
+                mail_letter = email.message_from_bytes(message_data[0][1])
+                for part in mail_letter.walk():
+                    # Getting bytes object containing the base64-decoded message
+                    text_bytes = part.get_payload(decode=True)
+                    content_charset = part.get_content_charset()
+                    self.__Body = text_bytes.decode(content_charset)
+
         finally:
             try:
                 connection.close()
@@ -100,7 +105,7 @@ def read_gmail():
             # print(data)
             print('Message %s\n%s\n' % (num, message_data[0][1]))
             mail = email.message_from_bytes(message_data[0][1])
-            print("Mail" ,mail)
+            print("Mail", mail)
             for part in mail.walk():
                 content_type = part.get_content_type()
                 print(content_type)
@@ -110,7 +115,7 @@ def read_gmail():
                 print(part["Subject"])
                 print(part["From"])
                 print(part["To"])
-                print(part["Content-Transfer-Encoding"])    #base64
+                print(part["Content-Transfer-Encoding"])  # base64
                 print(part["Received"])
                 filename = part.get_filename()
                 if filename:
@@ -140,11 +145,9 @@ def read_gmail():
 
 
 if __name__ == '__main__':
-
     mail = Mailing()
     flag = mail.is_online()
     print(flag)
-    #mail.read_unseen_mail()
-    #body = mail.mail_body
-    #print(body)
-
+    # mail.read_unseen_mail()
+    # body = mail.mail_body
+    # print(body)
