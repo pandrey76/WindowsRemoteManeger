@@ -159,7 +159,7 @@ class Engine:
                                                  r')' +
                                                  r'-LocalUser\s+([A-Za-z0-9_-]*)\s*')
             match_user_activation = pattern_user_activation.search(body)
-            if match_user_activation.group(2):
+            if (match_user_activation is not None) and (match_user_activation.group(2)):
                 if match_user_activation.group(1) == disable_string:
                     self.disable_user(match_user_activation.group(2))
                 elif match_user_activation.group(1) == enable_string:

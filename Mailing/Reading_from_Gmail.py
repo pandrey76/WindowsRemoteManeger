@@ -7,6 +7,8 @@ import importlib.util
 
 import socket
 
+import re
+
 
 # MAIN_EMAIL = "pinchukandreyurevich76@gmail.com"
 # GMAIL_PWD = ""
@@ -72,8 +74,10 @@ class Mailing:
                 for part in mail_letter.walk():
                     # Getting bytes object containing the base64-decoded message
                     text_bytes = part.get_payload(decode=True)
-                    content_charset = part.get_content_charset()
-                    self.__Body = text_bytes.decode(content_charset)
+                    # content_charset = part.get_content_charset()
+                    # self.__Body = text_bytes.decode(content_charset)
+                    email_body = re.findall(r"<div>(.*)<\/div>", str(part.get_payload(decode=True)))
+                    self.__Body = email_body[0]
 
         finally:
             try:
@@ -148,6 +152,6 @@ if __name__ == '__main__':
     mail = Mailing()
     flag = mail.is_online()
     print(flag)
-    # mail.read_unseen_mail()
+    mail.read_unseen_mail()
     # body = mail.mail_body
     # print(body)
