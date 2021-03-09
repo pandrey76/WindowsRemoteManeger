@@ -74,10 +74,13 @@ class Mailing:
                 for part in mail_letter.walk():
                     # Getting bytes object containing the base64-decoded message
                     text_bytes = part.get_payload(decode=True)
-                    # content_charset = part.get_content_charset()
-                    # self.__Body = text_bytes.decode(content_charset)
-                    email_body = re.findall(r"<div>(.*)<\/div>", str(part.get_payload(decode=True)))
-                    self.__Body = email_body[0]
+                    content_charset = part.get_content_charset()
+                    if content_charset is not None:
+                        self.__Body = text_bytes.decode(content_charset)
+                    else:
+                        self.__Body = str(text_bytes)
+                    # email_body = re.findall(r"<div>(.*)<\/div>", str(part.get_payload(decode=True)))
+                    # self.__Body = email_body[0]
 
         finally:
             try:
